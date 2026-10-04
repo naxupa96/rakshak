@@ -1,20 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0a0b0d;
-  --color-ink-2: #0d0f12;
+  --color-ink: #07080a;
+  --color-ink-2: #0b0d10;
+  --color-surface-0: #07080a;
+  --color-surface-1: #0f1216;
+  --color-surface-2: #15191f;
+  --color-surface-3: #1c222b;
   --color-panel: #111418;
   --color-panel-2: #171b20;
-  --color-line: #23282f;
-  --color-line-2: #2d333b;
-  --color-bone: #edeff2;
-  --color-mist: #98a0ab;
-  --color-dim: #6b737e;
-  --color-signal: #ff4d3d;
-  --color-signal-2: #b32b1f;
-  --color-amber: #f2a93b;
-  --color-emerald: #35c08a;
-  --color-azure: #5b93ff;
+  --color-line: #1f242c;
+  --color-line-2: #2a313c;
+  --color-bone: #f0f2f5;
+  --color-mist: #9aa3af;
+  --color-dim: #646d7a;
+  --color-signal: #ff4336;
+  --color-signal-2: #b8261b;
+  --color-amber: #e69d27;
+  --color-emerald: #2eb882;
+  --color-azure: #4d88ff;
 
   --font-sans: var(--font-inter), "Noto Sans Devanagari", "Noto Sans Gujarati", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -334,6 +338,44 @@ body {
     background: linear-gradient(135deg, #ffffff 20%, #ff7b6b 60%, #f2a93b 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+
+  /* Scanline sweep animation for OCR and terminal scanning */
+  .scanline-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+  .scanline-sweep::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(77, 136, 255, 0.8), rgba(255, 67, 54, 0.8), transparent);
+    box-shadow: 0 0 15px rgba(77, 136, 255, 0.6);
+    animation: scanline 2.4s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 10;
+  }
+  @keyframes scanline {
+    0% { top: 0%; opacity: 0.2; }
+    50% { opacity: 0.9; }
+    100% { top: 97%; opacity: 0.2; }
+  }
+
+  /* Intelligence Stage Progress Bar */
+  .intelligence-stage {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .intelligence-stage.active {
+    border-color: rgba(77, 136, 255, 0.5);
+    background: rgba(77, 136, 255, 0.08);
+  }
+  .intelligence-stage.done {
+    border-color: rgba(46, 184, 130, 0.4);
+    background: rgba(46, 184, 130, 0.06);
   }
 }
 

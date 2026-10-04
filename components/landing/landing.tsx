@@ -4,6 +4,8 @@ import { Fragment } from "react";
 import Link from "next/link";
 import { useApp } from "@/components/app-providers";
 import { DEMO_IDS } from "@/data/demo";
+import { HeroInteractiveGraph } from "@/components/landing/hero-interactive-graph";
+import { StoryDeconstruction } from "@/components/landing/story-deconstruction";
 
 function StaticGraph() {
   const nodes = [
@@ -106,29 +108,23 @@ export function Landing() {
             </div>
 
             <div className="hidden lg:block">
-              <div className="glass-card glow-border p-6 shadow-2xl">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="kicker">{dict.landing.graphKicker}</p>
-                  <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
-                    LIVE TOPOLOGY
-                  </span>
-                </div>
-                <StaticGraph />
-              </div>
+              <HeroInteractiveGraph />
             </div>
           </div>
 
-          <div className="mt-12 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-4">
+          <div className="mt-14 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line-2 bg-line md:grid-cols-4 shadow-xl">
             {dict.landing.impactStats.map((stat) => (
-              <div key={stat.label} className="bg-panel px-4 py-5">
+              <div key={stat.label} className="bg-surface-1 px-5 py-5 transition-all hover:bg-surface-2">
                 <p className="num text-3xl font-semibold text-bone">{stat.value}</p>
-                <p className="mt-1 text-[12.5px] leading-snug text-mist">{stat.label}</p>
+                <p className="mt-1 text-[12px] uppercase tracking-wider font-mono text-dim">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Cinematic Story Deconstruction Section */}
+      <StoryDeconstruction />
 
       <section className="mx-auto w-full max-w-6xl px-5 py-16">
         <div className="grid gap-10 md:grid-cols-[1fr_1fr]">

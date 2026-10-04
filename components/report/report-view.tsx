@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { AnalysisReport, ClaimType, EvidenceItem, RiskFactor, WhyItem } from "@/types";
 import { useApp } from "@/components/app-providers";
@@ -77,28 +77,49 @@ function useEvidenceText() {
 }
 
 function ScoreDial({ score, tone }: { score: number; tone: Tone }) {
+  const [displayScore, setDisplayScore] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const duration = 1000;
+    const startTime = performance.now();
+
+    function step(now: number) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // easeOutCubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayScore(Math.round(eased * score));
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    }
+    requestAnimationFrame(step);
+  }, [score]);
+
   const color = toneColor(tone);
   const r = 54;
   const c = 2 * Math.PI * r;
-  const filled = (Math.max(0, Math.min(100, score)) / 100) * c;
+  const filled = (Math.max(0, Math.min(100, displayScore)) / 100) * c;
   return (
-    <div className="relative h-[136px] w-[136px] shrink-0" role="img" aria-label={`${score} / 100`}>
+    <div className="relative h-[148px] w-[148px] shrink-0" role="img" aria-label={`${score} / 100`}>
       <svg viewBox="0 0 128 128" className="h-full w-full -rotate-90" aria-hidden="true">
-        <circle cx="64" cy="64" r={r} fill="none" stroke="#23282f" strokeWidth="9" />
+        <circle cx="64" cy="64" r={r} fill="none" stroke="#15191f" strokeWidth="10" />
         <circle
           cx="64"
           cy="64"
           r={r}
           fill="none"
           stroke={color}
-          strokeWidth="9"
+          strokeWidth="10"
           strokeLinecap="round"
           strokeDasharray={`${filled} ${c - filled}`}
+          style={{ transition: "stroke-dasharray 0.05s ease-out" }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="num text-[34px] font-semibold leading-none text-bone">{score}</span>
-        <span className="kicker mt-1">/ 100</span>
+        <span className="num text-[38px] font-bold leading-none text-bone tracking-tight">{displayScore}</span>
+        <span className="kicker mt-1 !text-mist font-semibold">/ 100</span>
       </div>
     </div>
   );

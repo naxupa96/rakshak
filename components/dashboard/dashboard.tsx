@@ -60,19 +60,40 @@ export function Dashboard() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-12">
-      <p className="kicker">{dict.dashboard.greetingAfternoon}</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-bone">{dict.dashboard.title}</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-6">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
+            <p className="kicker">NATIONAL INVESTOR THREAT MONITOR</p>
+          </div>
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-bone">Investor Threat Center</h1>
+          <p className="mt-1 text-sm text-mist">
+            Continuous threat vector telemetry, verified entity indices, and real-time fraud trends across Bharat.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link href="/investigate" className="btn btn-primary shimmer-btn !py-2 !px-4 !text-xs font-semibold">
+            + New Investigation
+          </Link>
+          <Link href="/locker" className="btn btn-ghost !py-2 !px-4 !text-xs font-semibold">
+            Evidence Locker
+          </Link>
+        </div>
+      </div>
 
-      <div className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-4">
+      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: dict.dashboard.investigations, value: stats.totalGenerated },
-          { label: dict.dashboard.saved, value: stats.list.length },
-          { label: dict.dashboard.highRisk, value: stats.highRisk },
-          { label: dict.dashboard.verifiedClaims, value: stats.verifiedClaims },
+          { label: "Total Interrogations", value: stats.totalGenerated, sub: "Session & Locker Scans", tone: "text-azure" },
+          { label: "Preserved Dossiers", value: stats.list.length, sub: "Saved in Local Locker", tone: "text-bone" },
+          { label: "Critical Threat Detections", value: stats.highRisk, sub: "Risk Score ≥ 65", tone: "text-signal" },
+          { label: "Verified Claims Proved", value: stats.verifiedClaims, sub: "Regulatory Registry Hits", tone: "text-emerald" },
         ].map((card) => (
-          <div key={card.label} className="bg-panel px-5 py-5">
-            <p className="num text-3xl font-semibold text-bone">{card.value}</p>
-            <p className="mt-1 text-[12.5px] text-mist">{card.label}</p>
+          <div key={card.label} className="panel-flat p-5 border border-line-2 bg-surface-1/90 rounded-2xl glass-card-hover">
+            <div className="flex items-center justify-between">
+              <span className="kicker !text-dim">{card.label}</span>
+              <span className={`num text-2xl font-bold ${card.tone}`}>{card.value}</span>
+            </div>
+            <p className="mt-2 text-xs font-mono text-dim">{card.sub}</p>
           </div>
         ))}
       </div>

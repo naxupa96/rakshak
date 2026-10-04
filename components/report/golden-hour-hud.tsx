@@ -38,37 +38,37 @@ export function GoldenHourHud({ risk, incidentId }: GoldenHourHudProps) {
   }
 
   return (
-    <div className="my-6 p-4 rounded-xl bg-gradient-to-r from-red-950/50 via-neutral-900/80 to-amber-950/30 border border-red-500/40 shadow-xl relative overflow-hidden backdrop-blur-md">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="my-6 p-5 rounded-2xl bg-surface-1/95 border-2 border-signal/60 shadow-[0_0_32px_rgba(255,67,54,0.18)] relative overflow-hidden backdrop-blur-xl">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
         {/* Urgent header & pulse */}
-        <div className="flex items-start gap-3">
-          <div className="p-2.5 rounded-lg bg-red-500/20 border border-red-500/40 text-red-400 shrink-0">
+        <div className="flex items-start gap-3.5">
+          <div className="p-3 rounded-xl bg-signal/15 border border-signal/40 text-signal shrink-0">
             <svg className="w-6 h-6 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
-                CRITICAL TRIAGE: GOLDEN HOUR HUD
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-signal bg-signal/10 px-2.5 py-0.5 rounded border border-signal/30">
+                🚨 CRITICAL TRIAGE: GOLDEN HOUR HUD
               </span>
-              <span className="text-[11px] text-neutral-400">Incident: #{incidentId.slice(0, 8)}</span>
+              <span className="text-[11px] font-mono text-dim">INCIDENT #{incidentId.slice(0, 8)}</span>
             </div>
-            <h4 className="text-sm font-semibold text-white mt-1">
+            <h4 className="text-base font-semibold text-bone mt-1.5 tracking-tight">
               Active Financial Loss Mitigation Protocol (First 60-120 Minutes)
             </h4>
-            <p className="text-xs text-neutral-300 mt-0.5">
+            <p className="text-xs text-mist mt-1 max-w-xl leading-relaxed">
               NPCI inter-bank lien freezing is 94% effective within the first 2 hours of illicit UPI/IMPS debit.
             </p>
           </div>
         </div>
 
         {/* Quick Action buttons */}
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
           {/* Direct 1930 Dial */}
           <a
             href="tel:1930"
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg shadow transition-colors"
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-3 bg-signal hover:bg-signal-2 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-[0_0_20px_rgba(255,67,54,0.4)] transition-all"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -79,7 +79,7 @@ export function GoldenHourHud({ risk, incidentId }: GoldenHourHudProps) {
           {/* USSD Freeze Code */}
           <button
             onClick={handleCopyUssd}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-medium rounded-lg border border-neutral-700 transition-colors"
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-3 bg-surface-2 hover:bg-surface-3 text-bone text-xs font-medium rounded-xl border border-line-2 transition-all"
           >
             <span className="font-mono font-bold text-amber-400">*99#</span>
             <span>{copiedUssd ? "Copied!" : "NPCI USSD"}</span>
@@ -90,7 +90,7 @@ export function GoldenHourHud({ risk, incidentId }: GoldenHourHudProps) {
             href="https://cybercrime.gov.in"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 bg-neutral-800/80 hover:bg-neutral-700 text-neutral-300 text-xs rounded-lg border border-neutral-700 transition-colors"
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-3 bg-surface-2 hover:bg-surface-3 text-mist hover:text-bone text-xs rounded-xl border border-line-2 transition-all"
           >
             <span>cybercrime.gov.in</span>
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

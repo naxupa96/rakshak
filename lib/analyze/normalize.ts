@@ -177,8 +177,13 @@ export function detectContext(text: string): ContentContext {
   const solicitation =
     /\b(?:invest(?:\s+(?:now|today|with\s+us))?|join(?:\s+(?:us|now))?|sign[-\s]?up|regist(?:er|ration)(?:\s+(?:now|today))?|deposit(?:s|ed)?|transfer(?:red|ring|s)?|pay(?:\s+(?:now|today))?|buy\s+now|limited\s+(?:offer|seats|slots|batch)|guarante(?:d|es)?|returns?|schemes?|opportunit(?:y|ies)|apply\s+now|enroll|activate\s+your|account\s+opening|registration\s+fee|processing\s+charge|expire[sd]?|share\s+the\s+otp|double\s+your\s+money)\b|निवेश करें|जुड़ें|पंजीकरण|भुगतान|गारंटी|रिटर्न|योजना|फ़ीस आज|નિવેશ કરો|જોડાવો|નોંધણી|ચુકવણી|ખાતરી|વળતર|યોજના/;
 
-  if (solicitation.test(t)) return "solicitation";
+  // Hard payments/transfers/scam coercion force solicitation context
+  const hardPaymentOrUrgency =
+    /\b(?:deposit(?:s|ed)?|transfer(?:red|ring|s)?|pay(?:\s+(?:now|today))?|buy\s+now|registration\s+fee|processing\s+charge|share\s+the\s+otp|double\s+your\s+money)\b|पंजीकरण\s*शुल्क|फीस\s*आज|ઓટીપી|પૈસા\s*ટ્રાન્સફર/;
+
+  if (hardPaymentOrUrgency.test(t)) return "solicitation";
   if (educational.test(t)) return "educational";
+  if (solicitation.test(t)) return "solicitation";
   if (news.test(t)) return "news";
   if (complaint.test(t)) return "complaint";
   return "neutral";

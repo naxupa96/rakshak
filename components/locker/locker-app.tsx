@@ -111,31 +111,57 @@ export function LockerApp() {
           <Empty text={dict.locker.noResults} />
         </div>
       ) : (
-        <ul className="mt-6 space-y-2.5">
+        <ul className="mt-6 space-y-3">
           {visible.map((entry) => {
             const report = entry.report;
             return (
-              <li key={entry.id} className="panel-flat flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3.5">
-                <span className="num text-[12.5px] text-dim">{entry.incident}</span>
-                <span className="text-sm text-bone">{dict.inputKinds[report.input.kind]}</span>
-                <Badge tone={LEVEL_TONE[report.risk.level]}>
-                  {report.risk.score} · {dict.risk.levels[report.risk.level].label}
-                </Badge>
-                <span className="text-[12.5px] text-mist">
-                  {fmt(dict.locker.signalsCount, { count: report.signals.length })}
-                </span>
-                <span className="truncate text-[12.5px] text-dim" style={{ maxWidth: "34rem" }}>
-                  {report.input.excerpt}
-                </span>
-                <span className="ml-auto flex items-center gap-2">
-                  <span className="hidden text-[12.5px] text-dim sm:inline">
-                    {new Date(entry.savedAt).toLocaleDateString()}
-                  </span>
-                  <Link className="btn btn-ghost !px-3 !py-1.5 !text-[12.5px]" href={`/incident/${entry.id}`}>
-                    {dict.locker.open}
+              <li
+                key={entry.id}
+                className="panel-flat glass-card-hover flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl border border-line-2 bg-surface-1/90"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="font-mono text-xs font-bold text-bone bg-surface-2 px-2.5 py-0.5 rounded border border-line-2">
+                      #{entry.incident}
+                    </span>
+                    <Badge tone={LEVEL_TONE[report.risk.level]}>
+                      {report.risk.score}/100 · {dict.risk.levels[report.risk.level].label}
+                    </Badge>
+                    <span className="text-xs font-medium text-azure">
+                      {dict.inputKinds[report.input.kind]}
+                    </span>
+                    <span className="text-xs text-dim">·</span>
+                    <span className="text-xs text-mist font-mono">
+                      {fmt(dict.locker.signalsCount, { count: report.signals.length })}
+                    </span>
+                    <span className="text-xs text-dim">·</span>
+                    <span className="text-xs text-dim font-mono">
+                      {new Date(entry.savedAt).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-sm text-bone font-mono line-clamp-2 bg-surface-0/60 p-2.5 rounded-lg border border-line/60">
+                    "{report.input.excerpt}"
+                  </p>
+
+                  {report.entities.length > 0 && (
+                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                      <span className="text-[11px] font-mono text-dim uppercase">Entities:</span>
+                      {report.entities.slice(0, 3).map((e) => (
+                        <span key={e.value} className="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-2 text-mist border border-line">
+                          {e.value}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 border-t md:border-t-0 border-line/60 pt-3 md:pt-0">
+                  <Link className="btn btn-primary shimmer-btn !px-4 !py-2 !text-xs font-semibold" href={`/incident/${entry.id}`}>
+                    {dict.locker.open} →
                   </Link>
                   <button
-                    className="btn btn-ghost !px-3 !py-1.5 !text-[12.5px] hover:border-signal/50 hover:text-[#ff9d92]"
+                    className="btn btn-ghost !px-3 !py-2 !text-xs hover:border-signal/50 hover:text-signal"
                     onClick={() => {
                       if (window.confirm(dict.locker.deleteConfirm)) {
                         removeIncident(entry.id);
@@ -145,7 +171,7 @@ export function LockerApp() {
                   >
                     {dict.locker.delete}
                   </button>
-                </span>
+                </div>
               </li>
             );
           })}

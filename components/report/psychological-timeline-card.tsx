@@ -45,20 +45,25 @@ export function PsychologicalTimelineCard({ timeline }: PsychologicalTimelineCar
   };
 
   return (
-    <div className="panel mt-6 p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-line pb-4">
+    <div className="panel mt-6 p-6 border-line-2 bg-surface-1/90 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-4">
         <div>
-          <p className="kicker">Anatomy of the Deception</p>
-          <h3 className="text-lg font-semibold text-bone">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-signal" />
+            <p className="kicker">PSYCHOLOGICAL FORENSICS · ATTACK CHAIN</p>
+          </div>
+          <h3 className="text-xl font-semibold tracking-tight text-bone mt-1">
             Cognitive Vulnerability & Scam Attack Chain
           </h3>
-          <p className="text-xs text-mist mt-0.5">
-            How this message weaponized human cognitive biases step-by-step to bypass caution.
+          <p className="text-xs text-mist mt-1 max-w-xl leading-relaxed">
+            Sequential breakdown of how emotional manipulation, false authority, and manufactured scarcity were weaponized to bypass critical faculty.
           </p>
         </div>
-        <span className="text-[11px] font-mono text-dim bg-white/[0.03] px-2.5 py-1 rounded border border-line">
-          {timeline.length} Manipulation Phases Detected
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono font-bold text-bone bg-surface-2 px-3 py-1 rounded-full border border-line-2">
+            {timeline.length} PHASES DETECTED
+          </span>
+        </div>
       </div>
 
       <div className="mt-6 relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-2.5 sm:before:left-3.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-gradient-to-b before:from-amber-500/40 via-sky-500/40 to-red-500/40">

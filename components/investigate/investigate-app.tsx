@@ -19,38 +19,64 @@ function Processing({ label, sub }: { label: string; sub?: string }) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setIndex((i) => Math.min(i + 1, STAGES.length - 1)), 420);
+    const timer = window.setInterval(() => setIndex((i) => Math.min(i + 1, STAGES.length - 1)), 380);
     return () => window.clearInterval(timer);
   }, []);
 
+  const progressPct = Math.round(((index + 1) / STAGES.length) * 100);
+
   return (
-    <div className="panel mx-auto max-w-lg px-6 py-8" role="status" aria-live="polite">
-      <p className="kicker">{label}</p>
-      <ol className="mt-5 space-y-2.5">
+    <div className="panel scanline-sweep mx-auto max-w-xl p-8 relative overflow-hidden bg-surface-1/95 border-azure/40 shadow-2xl" role="status" aria-live="polite">
+      <div className="flex items-center justify-between border-b border-line pb-4 mb-5">
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-azure animate-ping" />
+          <p className="kicker !text-azure">{label}</p>
+        </div>
+        <span className="text-xs font-mono font-bold text-bone px-2.5 py-1 rounded bg-surface-2 border border-line-2">
+          {progressPct}% COMPLETED
+        </span>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-2 mb-6">
         {STAGES.map((stage, i) => {
           const state = i < index ? "done" : i === index ? "active" : "pending";
           return (
-            <li key={stage} className="flex items-center gap-3 text-[13.5px]">
+            <div
+              key={stage}
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border text-xs font-mono transition-all ${
+                state === "done"
+                  ? "border-emerald/30 bg-emerald/5 text-emerald"
+                  : state === "active"
+                  ? "border-azure/60 bg-azure/10 text-bone shadow-[0_0_12px_rgba(77,136,255,0.2)] font-semibold"
+                  : "border-line/40 bg-surface-0/50 text-dim"
+              }`}
+            >
               <span
-                className={`h-2 w-2 rounded-full ${
-                  state === "done" ? "bg-emerald" : state === "active" ? "animate-pulse bg-amber" : "bg-line-2"
+                className={`h-1.5 w-1.5 rounded-full ${
+                  state === "done" ? "bg-emerald" : state === "active" ? "animate-pulse bg-azure" : "bg-line-2"
                 }`}
                 aria-hidden
               />
-              <span className={state === "pending" ? "text-dim" : state === "active" ? "text-bone" : "text-mist"}>
+              <span className="truncate">
                 {(dict.processing.stages as Record<string, string>)[stage] ?? stage}
               </span>
-            </li>
+            </div>
           );
         })}
-      </ol>
-      <div className="mt-6 h-1 w-full overflow-hidden rounded-full bg-white/8">
+      </div>
+
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-0 border border-line">
         <div
-          className="h-full rounded-full bg-bone transition-[width] duration-500"
-          style={{ width: `${((index + 1) / STAGES.length) * 100}%` }}
+          className="h-full rounded-full bg-gradient-to-r from-azure via-cyan-400 to-emerald transition-[width] duration-300"
+          style={{ width: `${progressPct}%` }}
         />
       </div>
-      {sub ? <p className="mt-4 text-[12.5px] text-dim">{sub}</p> : null}
+
+      <div className="mt-4 flex items-center justify-between text-[11.5px] font-mono text-dim">
+        <span>INTERROGATING CORRESPONDENCE</span>
+        <span>NO DATA TRANSMITTED EXTERNALLY</span>
+      </div>
+      {sub ? <p className="mt-2 text-xs text-center text-mist">{sub}</p> : null}
     </div>
   );
 }
