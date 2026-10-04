@@ -14,7 +14,7 @@ const LEVELS: RiskLevel[] = ["LOW", "MODERATE", "ELEVATED", "HIGH", "CRITICAL"];
 
 export function Dashboard() {
   const { dict, simple } = useApp();
-  const [entries, setEntries] = useState<LockerEntry[] | null>(null);
+  const [entries, setEntries] = useState<LockerEntry[]>([]);
 
   useAfterMount(() => {
     setEntries(listIncidents());
@@ -57,14 +57,6 @@ export function Dashboard() {
 
     return { list, distribution, topSignals, verifiedClaims, highRisk, totalGenerated, sparklineData, dayBuckets };
   }, [entries]);
-
-  if (entries === null) {
-    return (
-      <div className="mx-auto w-full max-w-6xl px-5 py-16">
-        <p className="text-sm text-dim">{dict.common.loading}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-12">
