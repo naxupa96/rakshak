@@ -17,7 +17,7 @@ import {
   type Tone,
 } from "@/components/ui";
 import { TrustGraphView } from "@/components/graph/trust-graph";
-import { downloadJson, saveIncident, listIncidents, getPreviousScan, recordScanHash } from "@/lib/storage/locker";
+import { downloadJson, saveIncident, listIncidents, getPreviousScan } from "@/lib/storage/locker";
 import { LiveVerificationChips } from "@/components/report/live-verification-chips";
 import { CounterfactualCard } from "@/components/report/counterfactual-card";
 import { ImpersonationDiffCard } from "@/components/report/impersonation-diff-card";
@@ -80,7 +80,6 @@ function ScoreDial({ score, tone }: { score: number; tone: Tone }) {
   const [displayScore, setDisplayScore] = useState(0);
 
   useEffect(() => {
-    let start = 0;
     const duration = 1000;
     const startTime = performance.now();
 
@@ -204,9 +203,10 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
   const [advisoryOpen, setAdvisoryOpen] = useState(false);
   const [simulatorOpen, setSimulatorOpen] = useState(false);
   const [baitOpen, setBaitOpen] = useState(false);
+  const inputText = report.input?.text;
   const prevScan = useMemo(() => {
-    return report.input?.text ? getPreviousScan(report.input.text) : null;
-  }, [report.input?.text]);
+    return inputText ? getPreviousScan(inputText) : null;
+  }, [inputText]);
 
   const onSave = () => {
     const entry = saveIncident(report);

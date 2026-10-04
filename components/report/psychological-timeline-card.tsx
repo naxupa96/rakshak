@@ -95,7 +95,7 @@ export function PsychologicalTimelineCard({ timeline }: PsychologicalTimelineCar
                 </div>
 
                 <div className="mt-2.5 rounded-lg border border-white/5 bg-black/40 px-3 py-2 font-mono text-xs text-mist italic">
-                  "{item.detectedQuote}"
+                  &ldquo;{item.detectedQuote}&rdquo;
                 </div>
 
                 <p className="mt-2 text-xs text-slate-300 leading-relaxed">

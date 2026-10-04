@@ -1,4 +1,4 @@
-import type { ComplaintDossier, AnalysisReport } from "@/types";
+import type { ComplaintDossier } from "@/types";
 
 /**
  * Generates an official, structured cybercrime and regulatory complaint dossier

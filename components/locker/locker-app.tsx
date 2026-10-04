@@ -161,7 +161,7 @@ export function LockerApp() {
                   {/* Excerpt / Entities */}
                   <div className="min-w-0 pr-4">
                     <p className="text-bone font-sans text-[12.5px] truncate">
-                      "{report.input.excerpt}"
+                      &ldquo;{report.input.excerpt}&rdquo;
                     </p>
                     {report.entities.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-1.5">

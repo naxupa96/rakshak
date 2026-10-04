@@ -45,9 +45,8 @@ export function probeVpaHandle(vpa: string, claimedEntity?: string): VpaProbeRes
     defaultP2M: false,
   };
 
-  // Check if prefix looks like a personal mobile number (10 digits) or anonymous random string
+  // Check if prefix looks like a personal mobile number (10 digits)
   const isPersonalMobilePrefix = /^[6-9]\d{9}$/.test(prefix);
-  const isRandomHexOrWord = /^[a-z0-9._-]{3,25}$/.test(prefix);
 
   const isClaimingCorporate = Boolean(
     claimedEntity &&

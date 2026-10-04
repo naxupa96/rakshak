@@ -5,10 +5,10 @@ import type { PsychologicalStage, Signal } from "@/types";
  * from the detected signals and quotes in the scam payload.
  */
 export function buildPsychologicalTimeline(params: {
-  text: string;
+  text?: string;
   signals: Signal[];
 }): PsychologicalStage[] {
-  const { text, signals } = params;
+  const { signals } = params;
   const stages: PsychologicalStage[] = [];
 
   // 1. Hook (Greed / Hope / Relief)

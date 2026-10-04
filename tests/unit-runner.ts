@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
-import { normalizeContent, cleanRawText, foldLeet, detectContext, extractDomains } from "../lib/analyze/normalize";
+import { normalizeContent, cleanRawText, foldLeet, extractDomains } from "../lib/analyze/normalize";
 import { detectTextSignals, deriveSignals, mergeSignals } from "../lib/analyze/signals";
 import { assessRisk } from "../lib/analyze/risk";
-import { analyzeDomains, checkRegistration, applyClaimVerification, buildEvidence } from "../lib/analyze/verify";
-import { extractClaims } from "../lib/analyze/claims";
+import { analyzeDomains, buildEvidence } from "../lib/analyze/verify";
 import { extractEntities } from "../lib/analyze/entities";
 
 let passes = 0;
@@ -354,7 +353,7 @@ it("flags fake SEBI certificate generated in Canva lacking cryptographic digital
 
 it("exports incident IOCs to valid OASIS STIX 2.1 JSON bundle", async () => {
   const { exportReportToStix21 } = await import("../lib/analyze/stix");
-  const dummyReport: any = {
+  const dummyReport = {
     id: "rep-stix-101",
     confidence: 0.95,
     risk: { score: 92, level: "CRITICAL" },
@@ -365,9 +364,9 @@ it("exports incident IOCs to valid OASIS STIX 2.1 JSON bundle", async () => {
     entities: [
       { type: "payment", value: "scammer@okaxis" },
     ],
-  };
+  } as unknown as Parameters<typeof exportReportToStix21>[0];
 
-  const bundle = exportReportToStix21(dummyReport);
+  const bundle = exportReportToStix21(dummyReport as unknown as Parameters<typeof exportReportToStix21>[0]);
   assert.equal(bundle.type, "bundle");
   assert.equal(bundle.spec_version, "2.1");
   assert.ok(bundle.objects.length >= 4, "Should have identity, 3 indicators, and report object");
@@ -429,9 +428,10 @@ it("constructs multi-hop layering dark-money graph with exfiltration latency met
       await t.fn();
       passes++;
       console.log(`  ✓ ${t.name}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       fails++;
-      console.error(`  ✗ ${t.name}\n`, err.message);
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`  ✗ ${t.name}\n`, message);
     }
   }
 

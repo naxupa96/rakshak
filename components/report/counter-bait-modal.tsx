@@ -110,7 +110,7 @@ export function CounterBaitModal({ isOpen, onClose }: { isOpen: boolean; onClose
                 </div>
 
                 <div className="p-3 rounded-lg bg-neutral-900 border border-neutral-800/80 font-mono text-neutral-200 text-xs leading-relaxed">
-                  "{item.generatedReply}"
+                  &ldquo;{item.generatedReply}&rdquo;
                 </div>
 
                 <div className="text-[11px] text-neutral-400">

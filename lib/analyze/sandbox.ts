@@ -75,7 +75,7 @@ export function inspectAndDisarmUrl(url: string, rawHtml?: string): SandboxInspe
   }
 
   // Disarm all active tags: script, iframe, object, embed, inline event handlers
-  let disarmed = rawHtml
+  const disarmed = rawHtml
     .replace(scriptRegex, "<!-- [Rakshak Sandboxed: Script Removed] -->")
     .replace(iframeRegex, "<!-- [Rakshak Sandboxed: Iframe Removed] -->")
     .replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, "data-disarmed-handler=''")

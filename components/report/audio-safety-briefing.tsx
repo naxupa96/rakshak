@@ -10,15 +10,9 @@ interface AudioSafetyBriefingProps {
   suspectName?: string;
 }
 
-export function AudioSafetyBriefing({ score, level, lang, suspectName }: AudioSafetyBriefingProps) {
+export function AudioSafetyBriefing({ score, lang }: AudioSafetyBriefingProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isSupported, setIsSupported] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      setIsSupported(true);
-    }
-  }, []);
+  const [isSupported, setIsSupported] = useState(() => typeof window !== "undefined" && "speechSynthesis" in window);
 
   const getBriefingText = (): { text: string; voiceLang: string } => {
     if (lang === "hi") {

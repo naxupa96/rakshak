@@ -19,50 +19,53 @@ export function traceCryptoWallets(text: string): CryptoWalletTrace[] {
   // Match Tron TRC-20 (T followed by 33 base58 characters)
   const tronMatches = text.match(/\bT[1-9A-HJ-NP-za-km-z]{33}\b/g) || [];
   for (const addr of Array.from(new Set(tronMatches))) {
+    const cluster = HIGH_RISK_WALLET_CLUSTERS["T"];
     traces.push({
       address: addr,
       chain: "TRON_TRC20",
       assetSymbol: "USDT",
       isKnownMixerOrMule: true,
-      clusterTag: "High-Velocity TRC-20 P2P Liquidity Pool",
-      riskScore: 92,
+      clusterTag: cluster.tag,
+      riskScore: cluster.risk,
       flags: [
         "Unregistered USDT OTC liquidity destination",
         "Layer-3 Dark Money Conversion point bypassing Indian banking freeze liens",
       ],
-      recommendedAction: "Request exchange-level address freezing through FIU-India / Indian Cybercrime Coordination Centre (I4C).",
+      recommendedAction: cluster.action,
     });
   }
 
   // Match Ethereum ERC-20 (0x followed by 40 hex characters)
   const ethMatches = text.match(/\b0x[a-fA-F0-9]{40}\b/g) || [];
   for (const addr of Array.from(new Set(ethMatches))) {
+    const cluster = HIGH_RISK_WALLET_CLUSTERS["0x"];
     traces.push({
       address: addr,
       chain: "ETHEREUM_ERC20",
       assetSymbol: "USDT",
       isKnownMixerOrMule: true,
-      clusterTag: "Decentralized Mixer / Bridge Routing",
-      riskScore: 84,
+      clusterTag: cluster.tag,
+      riskScore: cluster.risk,
       flags: [
         "Cross-chain liquidity bridge smart contract interaction pattern",
       ],
-      recommendedAction: "Submit immediate freeze notice to tether.to legal compliance.",
+      recommendedAction: cluster.action,
     });
   }
 
   // Match Bitcoin address (1, 3, or bc1)
   const btcMatches = text.match(/\b(?:1[a-km-zA-HJ-NP-Z1-9]{25,34}|3[a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[a-z0-9]{39,59})\b/g) || [];
   for (const addr of Array.from(new Set(btcMatches))) {
+    const cluster = HIGH_RISK_WALLET_CLUSTERS["bc1"];
     traces.push({
       address: addr,
       chain: "BITCOIN",
       assetSymbol: "BTC",
       isKnownMixerOrMule: true,
-      clusterTag: "Direct Bitcoin Wallet",
-      riskScore: 78,
+      clusterTag: cluster.tag,
+      riskScore: cluster.risk,
       flags: ["Non-custodial cryptocurrency off-ramp"],
-      recommendedAction: "Notify local cyber cell with blockchain transaction hash.",
+      recommendedAction: cluster.action,
     });
   }
 

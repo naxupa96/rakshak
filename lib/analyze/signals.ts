@@ -240,7 +240,7 @@ export function detectTextSignals(text: string, context: ContentContext): Signal
 
 export function deriveSignals(ctx: DeriveContext): Signal[] {
   const out: Signal[] = [];
-  const { entities, claims, normalized, context } = ctx;
+  const { entities, normalized, context } = ctx;
 
   const namedEntity = entities.some((e) => e.type === "company" || e.type === "person");
   const hasRegulator = entities.some((e) => e.type === "regulator");

@@ -83,10 +83,11 @@ async function checkOpenPhish(targetDomain: string, targetUrl?: string): Promise
   }
 
   const d = targetDomain.toLowerCase();
+  const uTarget = targetUrl?.toLowerCase();
   const hit = feedUrls.some((u) => {
     try {
       const host = new URL(u.startsWith("http") ? u : `http://${u}`).hostname.replace(/^www\./, "");
-      return host === d || host.endsWith("." + d);
+      return host === d || host.endsWith("." + d) || (uTarget ? u.includes(uTarget) : false);
     } catch {
       return u.includes(d);
     }

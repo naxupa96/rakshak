@@ -15,9 +15,11 @@ const LEVELS: RiskLevel[] = ["LOW", "MODERATE", "ELEVATED", "HIGH", "CRITICAL"];
 export function Dashboard() {
   const { dict, simple } = useApp();
   const [entries, setEntries] = useState<LockerEntry[]>([]);
+  const [mountedTime, setMountedTime] = useState(0);
 
   useAfterMount(() => {
     setEntries(listIncidents());
+    setMountedTime(Date.now());
   });
 
   const stats = useMemo(() => {
@@ -40,7 +42,7 @@ export function Dashboard() {
     const totalGenerated = reports.length > 0 ? reports.length + 3 : 0;
     
     // 7-day sparkline points
-    const now = Date.now();
+    const now = mountedTime || 1770000000000;
     const dayBuckets = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(now - (6 - i) * 86400000);
       return { date: d.toLocaleDateString([], { month: "short", day: "numeric" }), avg: 0, count: 0 };
@@ -56,7 +58,7 @@ export function Dashboard() {
     const sparklineData = dayBuckets.map((b) => (b.count > 0 ? Math.round(b.avg / b.count) : 25));
 
     return { list, distribution, topSignals, verifiedClaims, highRisk, totalGenerated, sparklineData, dayBuckets };
-  }, [entries]);
+  }, [entries, mountedTime]);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-12">
