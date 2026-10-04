@@ -181,10 +181,10 @@ export function InvestigateApp() {
                 setTab(t.id);
                 setError(null);
               }}
-              className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-colors ${
+              className={`rounded-full px-4 py-2 text-[13px] font-medium transition-all ${
                 tab === t.id
-                  ? "border-line-2 bg-panel-2 text-bone"
-                  : "border-line text-mist hover:border-line-2 hover:text-bone"
+                  ? "border border-white/20 bg-white/12 text-bone shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)] backdrop-blur-md"
+                  : "border border-line/60 text-mist hover:border-line-2 hover:text-bone hover:bg-white/[0.03]"
               }`}
             >
               {t.label}
@@ -192,7 +192,7 @@ export function InvestigateApp() {
           ))}
         </div>
 
-        {/* 1-Click Smart Clipboard Auto-Detect Button */}
+        {/* 1-Click Smart Clipboard Auto-Detect Button with Shimmer & Glow */}
         <button
           onClick={async () => {
             try {
@@ -215,7 +215,7 @@ export function InvestigateApp() {
               // Permission denied or clipboard empty
             }
           }}
-          className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 px-3.5 py-1.5 text-xs font-semibold text-sky-400 hover:bg-sky-500/20 transition-all shadow-sm"
+          className="shimmer-btn inline-flex items-center gap-1.5 rounded-full border border-sky-400/50 bg-sky-500/15 px-4 py-2 text-xs font-semibold text-sky-300 hover:bg-sky-500/25 transition-all shadow-[0_0_16px_rgba(56,189,248,0.2)] hover:shadow-[0_0_24px_rgba(56,189,248,0.35)]"
           title="Reads clipboard, auto-classifies URL vs text, and runs scan in 1 click"
         >
           <span>📋</span>
@@ -252,11 +252,16 @@ export function InvestigateApp() {
                 setDragging(false);
                 void handleFile(e.dataTransfer.files?.[0]);
               }}
-              className={`flex min-h-[190px] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed px-6 py-8 text-center transition-colors ${
-                dragging ? "border-azure bg-azure/5" : "border-line-2 bg-ink-2"
+              className={`flex min-h-[190px] flex-col items-center justify-center gap-3.5 rounded-2xl border-2 border-dashed px-6 py-8 text-center transition-all ${
+                dragging
+                  ? "border-azure bg-azure/10 shadow-[0_0_24px_rgba(91,147,255,0.25)]"
+                  : "border-line-2/70 bg-ink-2/60 hover:border-line-2 hover:bg-ink-2/90"
               }`}
             >
-              <p className="text-sm text-mist">{dragging ? dict.input.dropHere : dict.input.hintScreenshot}</p>
+              <div className="w-10 h-10 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center text-lg">
+                🖼️
+              </div>
+              <p className="text-sm font-medium text-mist max-w-sm">{dragging ? dict.input.dropHere : dict.input.hintScreenshot}</p>
               <input
                 ref={fileRef}
                 type="file"
@@ -264,7 +269,7 @@ export function InvestigateApp() {
                 className="sr-only"
                 onChange={(e) => void handleFile(e.target.files?.[0])}
               />
-              <button className="btn btn-ghost !py-2 !text-[13px]" onClick={() => fileRef.current?.click()}>
+              <button className="btn btn-ghost glass-card-hover !py-2 !text-[13px] border border-white/10 hover:border-white/20" onClick={() => fileRef.current?.click()}>
                 {dict.input.browse}
               </button>
             </div>
@@ -346,7 +351,7 @@ export function InvestigateApp() {
         <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4">
           <p className="max-w-md text-[12.5px] leading-relaxed text-dim">{dict.input.privacyNotice}</p>
           <button
-            className="btn btn-primary"
+            className="btn btn-primary shimmer-btn shadow-[0_0_24px_rgba(237,239,242,0.18)] hover:shadow-[0_0_32px_rgba(237,239,242,0.3)] !px-6 !py-2.5 font-semibold text-[14px]"
             disabled={
               busy ||
               (tab === "text" && !text.trim()) ||

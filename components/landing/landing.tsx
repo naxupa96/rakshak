@@ -70,7 +70,7 @@ export function Landing() {
             <div>
               <p className="kicker">AI Financial Threat Intelligence · India</p>
               <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight text-bone md:text-6xl">
-                {dict.hero.headline}
+                <span className="text-glow-gradient">{dict.hero.headline}</span>
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-mist md:text-xl">{dict.hero.sub}</p>
               <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-dim">{dict.hero.body}</p>
@@ -79,11 +79,11 @@ export function Landing() {
               <ol className="mt-7 flex flex-wrap items-center gap-x-2 gap-y-2" aria-label={dict.hero.loopLabel}>
                 {dict.landing.steps.map((step, i) => (
                   <Fragment key={step.title}>
-                    <li className="chip !px-3.5 !py-1.5 !text-[12px] font-semibold uppercase tracking-[0.16em]">
+                    <li className="chip !px-3.5 !py-1.5 !text-[12px] font-semibold uppercase tracking-[0.16em] glass-card-hover border-line-2">
                       {step.title}
                     </li>
                     {i < dict.landing.steps.length - 1 ? (
-                      <li aria-hidden className="text-[13px] text-dim">
+                      <li aria-hidden className="text-[13px] text-amber-400 font-bold">
                         →
                       </li>
                     ) : null}
@@ -92,10 +92,10 @@ export function Landing() {
               </ol>
 
               <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Link href="/investigate" className="btn btn-primary !px-6 !py-3 !text-[15px]">
+                <Link href="/investigate" className="btn btn-primary shimmer-btn !px-6 !py-3 !text-[15px] shadow-lg shadow-white/10">
                   {dict.hero.cta}
                 </Link>
-                <Link href={`/investigate?demo=${DEMO_IDS[0]}`} className="btn btn-ghost !px-6 !py-3 !text-[15px]">
+                <Link href={`/investigate?demo=${DEMO_IDS[0]}`} className="btn btn-ghost glass-card-hover !px-6 !py-3 !text-[15px]">
                   {dict.hero.ctaDemo}
                 </Link>
                 <a href="#how" className="px-1 text-[14px] text-mist underline-offset-4 hover:text-bone hover:underline">
@@ -106,8 +106,14 @@ export function Landing() {
             </div>
 
             <div className="hidden lg:block">
-              <div className="panel p-5">
-                <p className="kicker mb-3">{dict.landing.graphKicker}</p>
+              <div className="glass-card glow-border p-6 shadow-2xl">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="kicker">{dict.landing.graphKicker}</p>
+                  <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+                    LIVE TOPOLOGY
+                  </span>
+                </div>
                 <StaticGraph />
               </div>
             </div>

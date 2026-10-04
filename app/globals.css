@@ -64,16 +64,22 @@ body {
 @layer components {
   .panel {
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)) ,
-      var(--color-panel);
+      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+      rgba(17, 20, 24, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   }
 
   .panel-flat {
-    background: var(--color-panel);
+    background: rgba(17, 20, 24, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
   }
 
   .hairline {
@@ -235,6 +241,99 @@ body {
 
   .tabular {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Liquid Glass (glass.samasante.com) & Glassmorphism Tokens */
+  .glass-card {
+    background: rgba(17, 20, 24, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  }
+
+  .glass-card-hover {
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .glass-card-hover:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.6);
+  }
+
+  /* Aceternity & Magic UI Glowing Gradient Borders */
+  .glow-border {
+    position: relative;
+    border-radius: var(--radius-card);
+  }
+  .glow-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: calc(var(--radius-card) + 1px);
+    padding: 1px;
+    background: linear-gradient(90deg, rgba(255, 77, 61, 0.6), rgba(242, 169, 59, 0.6), rgba(91, 147, 255, 0.6), rgba(53, 192, 138, 0.6));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+  .glow-border:hover::before {
+    opacity: 1;
+  }
+
+  /* Magic UI Radar Sweep Animation */
+  .radar-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+  .radar-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(from 0deg at 50% 50%, rgba(53, 192, 138, 0) 0deg, rgba(53, 192, 138, 0.18) 60deg, rgba(53, 192, 138, 0) 120deg);
+    animation: radar-spin 4s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes radar-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* MicroKit UI Button Shimmer */
+  .shimmer-btn {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-btn::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      60deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.12) 25%,
+      transparent 30%
+    );
+    transform: rotate(30deg);
+    animation: shimmer-slide 4s infinite linear;
+    pointer-events: none;
+  }
+  @keyframes shimmer-slide {
+    0% { transform: translateX(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) rotate(30deg); }
+  }
+
+  /* Text Gradient Shimmer for Headlines */
+  .text-glow-gradient {
+    background: linear-gradient(135deg, #ffffff 20%, #ff7b6b 60%, #f2a93b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 

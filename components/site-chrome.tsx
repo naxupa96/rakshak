@@ -23,8 +23,10 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
   return (
     <Link
       href={href}
-      className={`text-sm font-medium transition-colors ${
-        active ? "text-bone" : "text-mist hover:text-bone"
+      className={`relative px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+        active
+          ? "text-bone bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] border border-white/10"
+          : "text-mist hover:text-bone hover:bg-white/[0.04]"
       }`}
     >
       {label}
@@ -37,7 +39,7 @@ export function SiteNav() {
   const pathname = usePathname();
 
   return (
-    <header className="no-print sticky top-0 z-40 border-b border-line bg-ink/85 backdrop-blur-md">
+    <header className="no-print sticky top-0 z-40 border-b border-line/80 bg-ink/70 backdrop-blur-xl supports-[backdrop-filter]:bg-ink/60 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
       <a
         href="#content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-xl focus:bg-bone focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-ink"

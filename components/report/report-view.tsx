@@ -371,7 +371,7 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
       </div>
 
       {/* Verdict — the first thing a judge should see. */}
-      <div className="panel p-5 sm:p-6">
+      <div className="panel glass-card glow-border p-5 sm:p-6 shadow-2xl relative">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
           <ScoreDial score={report.risk.score} tone={levelTone} />
           <div className="min-w-[220px] flex-1">
