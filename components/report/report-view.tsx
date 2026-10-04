@@ -391,41 +391,55 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
         </div>
       </div>
 
-      {/* Verdict — the first thing a judge should see. */}
-      <div className="panel glass-card glow-border p-5 sm:p-6 shadow-2xl relative">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+      {/* Verdict Dossier Header */}
+      <div className="border border-line bg-[#080b0f] p-5 font-mono text-xs text-bone select-none">
+        {/* Top Docket Meta Bar */}
+        <div className="flex flex-wrap items-center justify-between border-b border-line bg-[#0c0f15] -mx-5 -mt-5 p-3.5 mb-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-signal" />
+            <span className="font-bold tracking-wider text-bone">FORENSIC THREAT DOSSIER</span>
+            <span className="text-dim">|</span>
+            <span className="text-[11px] text-azure">{incident ? `DOCKET ${incident}` : report.id}</span>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] text-dim">
+            <span>DETERMINISTIC ANALYSIS</span>
+            <span className="text-emerald">VERIFIED RECEIPT ●</span>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-6">
           <ScoreDial score={report.risk.score} tone={levelTone} />
           <div className="min-w-[220px] flex-1">
-            <p className="kicker">{dict.risk.label}</p>
+            <span className="kicker !text-dim block">EVALUATED THREAT CLASSIFICATION</span>
             <p
-              className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl"
+              className="mt-1 text-2xl font-bold font-sans tracking-tight sm:text-3xl"
               style={{ color: toneColor(levelTone) }}
             >
               {dict.risk.levels[report.risk.level].label}
             </p>
             <div className="mt-1 flex items-center gap-3">
-              <p className="num text-lg font-semibold text-bone">
+              <p className="num text-base font-bold text-bone">
                 {report.risk.score} <span className="text-dim">/ 100</span>
               </p>
               {prevScan && (
-                <span className={`inline-flex items-center rounded-md px-2 py-0.5 font-mono text-xs font-semibold ${
+                <span className={`inline-flex items-center px-1.5 py-0.5 font-mono text-[10px] font-semibold border ${
                   report.risk.score > prevScan.score
-                    ? "bg-coral/15 text-coral"
+                    ? "bg-signal/15 text-signal border-signal/30"
                     : report.risk.score < prevScan.score
-                    ? "bg-leaf/15 text-leaf"
-                    : "bg-charcoal text-dim"
+                    ? "bg-emerald/15 text-emerald border-emerald/30"
+                    : "bg-[#111418] text-dim border-line"
                 }`}>
                   {report.risk.score > prevScan.score ? `▲ +${report.risk.score - prevScan.score}` : report.risk.score < prevScan.score ? `▼ ${report.risk.score - prevScan.score}` : "±0"} vs prev scan
                 </span>
               )}
             </div>
-            <p className="mt-1.5 text-sm leading-relaxed text-mist">
+            <p className="mt-1 text-xs font-sans leading-relaxed text-mist">
               {dict.risk.levels[report.risk.level].line}
             </p>
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-line pt-3.5 text-[13px]">
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-line pt-3 text-[11px] font-mono text-dim">
           <span className="text-bone">
             {countText(dict, report.signals.length, dict.report.signalsDetected, dict.report.signalsDetectedOne)}
           </span>

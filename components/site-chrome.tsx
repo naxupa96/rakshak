@@ -23,10 +23,10 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
   return (
     <Link
       href={href}
-      className={`relative px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+      className={`px-3 py-1 text-xs font-mono uppercase tracking-wider transition-colors ${
         active
-          ? "text-bone bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] border border-white/10"
-          : "text-mist hover:text-bone hover:bg-white/[0.04]"
+          ? "bg-[#141820] text-bone border-b-2 border-bone font-semibold"
+          : "text-mist hover:text-bone hover:bg-[#0f1217]"
       }`}
     >
       {label}
@@ -39,23 +39,23 @@ export function SiteNav() {
   const pathname = usePathname();
 
   return (
-    <header className="no-print sticky top-0 z-40 border-b border-line/80 bg-ink/70 backdrop-blur-xl supports-[backdrop-filter]:bg-ink/60 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+    <header className="no-print sticky top-0 z-40 border-b border-line bg-[#07090c]/95 backdrop-blur-md">
       <a
         href="#content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-xl focus:bg-bone focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-ink"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-none focus:bg-bone focus:px-4 focus:py-2 focus:text-xs focus:font-mono focus:text-ink"
       >
         {dict.common.skipToContent}
       </a>
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 px-5">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-6 px-5 font-mono">
         <Link href="/" className="flex items-center gap-2.5 text-bone">
-          <BrandMark />
-          <span className="text-[15px] font-semibold tracking-tight">{dict.brand.name}</span>
-          <span className="hidden text-[11px] uppercase tracking-[0.18em] text-dim sm:inline">
-            {dict.brand.positioning.split(" ").slice(-3).join(" ")}
+          <BrandMark size={20} />
+          <span className="text-[14px] font-bold tracking-wider font-sans uppercase">{dict.brand.name}</span>
+          <span className="hidden text-[10px] uppercase tracking-[0.2em] text-dim sm:inline border-l border-line pl-2.5">
+            FINANCIAL THREAT INTEL
           </span>
         </Link>
 
-        <nav className="ml-2 hidden items-center gap-4 md:flex">
+        <nav className="ml-2 hidden items-center gap-2 md:flex">
           <NavLink href="/investigate" label={dict.nav.investigate} active={pathname.startsWith("/investigate")} />
           <NavLink href="/locker" label={dict.nav.locker} active={pathname.startsWith("/locker")} />
           <NavLink href="/dashboard" label={dict.nav.dashboard} active={pathname.startsWith("/dashboard")} />

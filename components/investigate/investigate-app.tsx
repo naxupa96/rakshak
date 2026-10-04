@@ -19,64 +19,72 @@ function Processing({ label, sub }: { label: string; sub?: string }) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setIndex((i) => Math.min(i + 1, STAGES.length - 1)), 380);
+    const timer = window.setInterval(() => setIndex((i) => Math.min(i + 1, STAGES.length - 1)), 350);
     return () => window.clearInterval(timer);
   }, []);
 
   const progressPct = Math.round(((index + 1) / STAGES.length) * 100);
 
   return (
-    <div className="panel scanline-sweep mx-auto max-w-xl p-8 relative overflow-hidden bg-surface-1/95 border-azure/40 shadow-2xl" role="status" aria-live="polite">
-      <div className="flex items-center justify-between border-b border-line pb-4 mb-5">
+    <div className="mx-auto max-w-xl border border-line bg-[#080b0f] p-6 text-bone font-mono text-xs select-none" role="status" aria-live="polite">
+      {/* Top Docket Bar */}
+      <div className="flex items-center justify-between border-b border-line pb-3 mb-4 bg-[#0c0f15] -mx-6 -mt-6 p-4">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-azure animate-ping" />
-          <p className="kicker !text-azure">{label}</p>
+          <span className="w-2 h-2 bg-signal" />
+          <span className="font-bold tracking-wider text-bone">INTERROGATION IN PROGRESS</span>
         </div>
-        <span className="text-xs font-mono font-bold text-bone px-2.5 py-1 rounded bg-surface-2 border border-line-2">
-          {progressPct}% COMPLETED
+        <span className="text-[11px] font-bold text-azure border border-azure/40 bg-azure/10 px-2 py-0.5">
+          {progressPct}% COMPLETE
         </span>
       </div>
 
-      <div className="grid gap-2 sm:grid-cols-2 mb-6">
+      <div className="mb-4">
+        <p className="text-[11px] uppercase tracking-wider text-mist">{label}</p>
+        {sub ? <p className="text-[11px] text-dim mt-0.5">{sub}</p> : null}
+      </div>
+
+      {/* Stage Grid */}
+      <div className="border border-line divide-y divide-line mb-5 bg-[#0a0d12]">
         {STAGES.map((stage, i) => {
           const state = i < index ? "done" : i === index ? "active" : "pending";
           return (
             <div
               key={stage}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border text-xs font-mono transition-all ${
+              className={`flex items-center justify-between px-3.5 py-2 transition-colors ${
                 state === "done"
-                  ? "border-emerald/30 bg-emerald/5 text-emerald"
+                  ? "bg-[#0b1016] text-emerald"
                   : state === "active"
-                  ? "border-azure/60 bg-azure/10 text-bone shadow-[0_0_12px_rgba(77,136,255,0.2)] font-semibold"
-                  : "border-line/40 bg-surface-0/50 text-dim"
+                  ? "bg-[#111722] text-bone font-bold"
+                  : "text-dim"
               }`}
             >
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  state === "done" ? "bg-emerald" : state === "active" ? "animate-pulse bg-azure" : "bg-line-2"
-                }`}
-                aria-hidden
-              />
-              <span className="truncate">
-                {(dict.processing.stages as Record<string, string>)[stage] ?? stage}
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono text-[10px]">
+                  {state === "done" ? "✓" : state === "active" ? "●" : "○"}
+                </span>
+                <span className="uppercase tracking-wider text-[11px]">
+                  {(dict.processing.stages as Record<string, string>)[stage] ?? stage}
+                </span>
+              </div>
+              <span className="text-[10px] text-dim">
+                {state === "done" ? "EXECUTED" : state === "active" ? "PROCESSING" : "QUEUED"}
               </span>
             </div>
           );
         })}
       </div>
 
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-0 border border-line">
+      <div className="h-1 w-full bg-[#13171f] border border-line">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-azure via-cyan-400 to-emerald transition-[width] duration-300"
+          className="h-full bg-azure transition-[width] duration-200"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
-      <div className="mt-4 flex items-center justify-between text-[11.5px] font-mono text-dim">
-        <span>INTERROGATING CORRESPONDENCE</span>
-        <span>NO DATA TRANSMITTED EXTERNALLY</span>
+      <div className="mt-3 flex items-center justify-between text-[10px] text-dim">
+        <span>SECURITY LEVEL: AIR-GAPPED EVALUATION</span>
+        <span>NO EXTERNAL RETENTION</span>
       </div>
-      {sub ? <p className="mt-2 text-xs text-center text-mist">{sub}</p> : null}
     </div>
   );
 }
@@ -191,13 +199,19 @@ export function InvestigateApp() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-5 py-12">
-      <p className="kicker">{dict.input.kicker}</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-bone">{dict.input.title}</h1>
-      <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-mist">{dict.input.subtitle}</p>
+    <div className="mx-auto w-full max-w-4xl px-5 py-10 font-mono text-xs text-bone">
+      {/* Workstation Header */}
+      <div className="border-b border-line pb-4 mb-6">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="h-1.5 w-1.5 bg-signal" />
+          <p className="kicker !text-bone">FORENSIC INTAKE WORKSTATION</p>
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-bone font-sans">{dict.input.title}</h1>
+        <p className="mt-1 text-xs text-mist font-sans">{dict.input.subtitle}</p>
+      </div>
 
-      <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label={dict.input.title}>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
+        <div className="flex flex-wrap gap-1" role="tablist" aria-label={dict.input.title}>
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -207,18 +221,18 @@ export function InvestigateApp() {
                 setTab(t.id);
                 setError(null);
               }}
-              className={`rounded-full px-4 py-2 text-[13px] font-medium transition-all ${
+              className={`border px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors ${
                 tab === t.id
-                  ? "border border-white/20 bg-white/12 text-bone shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)] backdrop-blur-md"
-                  : "border border-line/60 text-mist hover:border-line-2 hover:text-bone hover:bg-white/[0.03]"
+                  ? "border-bone bg-bone text-ink font-bold"
+                  : "border-line bg-[#090b0e] text-mist hover:text-bone hover:border-line-2"
               }`}
             >
-              {t.label}
+              [ {t.label} ]
             </button>
           ))}
         </div>
 
-        {/* 1-Click Smart Clipboard Auto-Detect Button with Shimmer & Glow */}
+        {/* 1-Click Clipboard Auto-Detect */}
         <button
           onClick={async () => {
             try {
@@ -238,26 +252,25 @@ export function InvestigateApp() {
                 }
               }
             } catch {
-              // Permission denied or clipboard empty
+              // Permission denied
             }
           }}
-          className="shimmer-btn inline-flex items-center gap-1.5 rounded-full border border-sky-400/50 bg-sky-500/15 px-4 py-2 text-xs font-semibold text-sky-300 hover:bg-sky-500/25 transition-all shadow-[0_0_16px_rgba(56,189,248,0.2)] hover:shadow-[0_0_24px_rgba(56,189,248,0.35)]"
-          title="Reads clipboard, auto-classifies URL vs text, and runs scan in 1 click"
+          className="border border-azure/40 bg-azure/10 px-3 py-1.5 text-xs font-mono text-azure hover:bg-azure/20 hover:text-bone transition-colors"
+          title="Reads clipboard and initiates interrogation"
         >
-          <span>📋</span>
-          <span>Paste & Quick Scan</span>
+          PASTE & INTERROGATE ↵
         </button>
       </div>
 
-      <div className="panel mt-5 p-5">
+      <div className="border border-line bg-[#080b0f] p-5 mt-4">
         {tab === "text" ? (
           <div>
-            <label htmlFor="paste" className="kicker">
+            <label htmlFor="paste" className="kicker !text-dim block mb-2">
               {dict.input.hintText}
             </label>
             <textarea
               id="paste"
-              className="field mt-2 min-h-[200px] resize-y font-mono !text-[13.5px] leading-relaxed"
+              className="field min-h-[190px] resize-y font-mono !text-xs leading-relaxed border-line bg-[#06080b]"
               placeholder={dict.input.placeholderText}
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -278,16 +291,16 @@ export function InvestigateApp() {
                 setDragging(false);
                 void handleFile(e.dataTransfer.files?.[0]);
               }}
-              className={`flex min-h-[190px] flex-col items-center justify-center gap-3.5 rounded-2xl border-2 border-dashed px-6 py-8 text-center transition-all ${
+              className={`flex min-h-[170px] flex-col items-center justify-center gap-3 border border-dashed px-6 py-6 text-center transition-colors ${
                 dragging
-                  ? "border-azure bg-azure/10 shadow-[0_0_24px_rgba(91,147,255,0.25)]"
-                  : "border-line-2/70 bg-ink-2/60 hover:border-line-2 hover:bg-ink-2/90"
+                  ? "border-azure bg-azure/10 text-bone"
+                  : "border-line bg-[#06080b] hover:border-line-2 text-mist"
               }`}
             >
-              <div className="w-10 h-10 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center text-lg">
-                🖼️
-              </div>
-              <p className="text-sm font-medium text-mist max-w-sm">{dragging ? dict.input.dropHere : dict.input.hintScreenshot}</p>
+              <span className="font-mono text-xs uppercase tracking-wider text-dim">
+                DRAG IMAGE EVIDENCE HERE OR BROWSE LOCAL FILES
+              </span>
+              <p className="text-xs text-mist max-w-sm font-sans">{dragging ? dict.input.dropHere : dict.input.hintScreenshot}</p>
               <input
                 ref={fileRef}
                 type="file"
@@ -295,18 +308,22 @@ export function InvestigateApp() {
                 className="sr-only"
                 onChange={(e) => void handleFile(e.target.files?.[0])}
               />
-              <button className="btn btn-ghost glass-card-hover !py-2 !text-[13px] border border-white/10 hover:border-white/20" onClick={() => fileRef.current?.click()}>
-                {dict.input.browse}
+              <button
+                className="btn btn-ghost !py-1.5 !px-3 !text-xs font-mono uppercase"
+                onClick={() => fileRef.current?.click()}
+              >
+                SELECT FILE
               </button>
             </div>
 
             {ocr.status === "reading" ? (
-              <div className="mt-4" role="status" aria-live="polite">
-                <p className="text-sm text-mist">
-                  {dict.input.ocrReading} {ocr.progress}%
-                </p>
-                <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/8">
-                  <div className="h-full bg-bone transition-[width]" style={{ width: `${ocr.progress}%` }} />
+              <div className="mt-4 p-3 border border-line bg-[#0a0d12]" role="status" aria-live="polite">
+                <div className="flex items-center justify-between text-xs text-mist font-mono mb-2">
+                  <span>OCR EXTRACTION IN PROGRESS...</span>
+                  <span>{ocr.progress}%</span>
+                </div>
+                <div className="h-1 w-full bg-[#151922] border border-line">
+                  <div className="h-full bg-azure transition-[width]" style={{ width: `${ocr.progress}%` }} />
                 </div>
               </div>
             ) : null}
@@ -314,13 +331,13 @@ export function InvestigateApp() {
             {ocr.status === "done" ? (
               <div className="mt-4">
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="kicker">{dict.input.extractReview}</p>
-                  <Badge tone={ocr.confidence >= 80 ? "good" : "warn"}>
-                    {dict.input.ocrDone} · {ocr.confidence}%
-                  </Badge>
+                  <p className="kicker !text-dim">{dict.input.extractReview}</p>
+                  <span className="text-[11px] font-mono text-emerald bg-emerald/10 border border-emerald/30 px-2 py-0.5">
+                    CONFIDENCE: {ocr.confidence}%
+                  </span>
                 </div>
                 <textarea
-                  className="field min-h-[160px] resize-y font-mono !text-[13.5px] leading-relaxed"
+                  className="field min-h-[150px] resize-y font-mono !text-xs leading-relaxed border-line bg-[#06080b]"
                   value={ocr.text}
                   onChange={(e) => setOcr((prev) => ({ ...prev, text: e.target.value }))}
                 />
@@ -331,12 +348,12 @@ export function InvestigateApp() {
 
         {tab === "url" ? (
           <div>
-            <label htmlFor="url" className="kicker">
+            <label htmlFor="url" className="kicker !text-dim block mb-2">
               {dict.input.hintUrl}
             </label>
             <input
               id="url"
-              className="field mt-2 font-mono !text-[13.5px]"
+              className="field font-mono !text-xs border-line bg-[#06080b]"
               placeholder={dict.input.placeholderUrl}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -346,38 +363,41 @@ export function InvestigateApp() {
 
         {tab === "demo" ? (
           <div>
-            <p className="kicker">{dict.demo.hint}</p>
-            <ul className="mt-3 grid gap-3 sm:grid-cols-2">
-              {DEMO_IDS.map((id) => {
+            <p className="kicker !text-dim mb-3">{dict.demo.hint}</p>
+            <div className="border border-line divide-y divide-line">
+              {DEMO_IDS.map((id, idx) => {
                 const scenario = (dict.demo.scenarios as Record<string, { title: string; desc: string }>)[id];
                 return (
-                  <li key={id} className="panel-flat flex flex-col gap-2 px-4 py-3.5">
-                    <span className="text-sm font-medium text-bone">{scenario?.title ?? id}</span>
-                    <span className="text-[13px] leading-relaxed text-mist">{scenario?.desc}</span>
+                  <div key={id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-[#07090c] hover:bg-[#0c0f15] transition-colors">
+                    <div>
+                      <span className="text-xs font-bold text-azure font-mono">RX-DEMO-0{idx + 1} // </span>
+                      <span className="text-xs font-sans font-semibold text-bone">{scenario?.title ?? id}</span>
+                      <p className="text-[11px] font-sans text-mist mt-0.5">{scenario?.desc}</p>
+                    </div>
                     <button
-                      className="btn btn-ghost mt-1 !py-1.5 !text-[12.5px]"
+                      className="btn btn-ghost !py-1 !px-3 !text-xs font-mono uppercase shrink-0"
                       disabled={busy}
                       onClick={() => void run({ kind: "text", demo: id })}
                     >
                       {busy ? dict.demo.running : dict.demo.run}
                     </button>
-                  </li>
+                  </div>
                 );
               })}
-            </ul>
+            </div>
           </div>
         ) : null}
 
         {error ? (
-          <p className="mt-4 rounded-xl border border-signal/40 bg-signal/10 px-4 py-3 text-[13.5px] text-[#ffb4ac]" role="alert">
-            {error}
+          <p className="mt-4 border border-signal/50 bg-signal/10 px-4 py-2.5 text-xs text-signal font-mono" role="alert">
+            ERROR: {error}
           </p>
         ) : null}
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4">
-          <p className="max-w-md text-[12.5px] leading-relaxed text-dim">{dict.input.privacyNotice}</p>
+          <p className="max-w-md text-[11px] text-dim font-sans leading-relaxed">{dict.input.privacyNotice}</p>
           <button
-            className="btn btn-primary shimmer-btn shadow-[0_0_24px_rgba(237,239,242,0.18)] hover:shadow-[0_0_32px_rgba(237,239,242,0.3)] !px-6 !py-2.5 font-semibold text-[14px]"
+            className="btn btn-primary !px-6 !py-2.5 text-xs font-mono uppercase tracking-wider font-bold"
             disabled={
               busy ||
               (tab === "text" && !text.trim()) ||

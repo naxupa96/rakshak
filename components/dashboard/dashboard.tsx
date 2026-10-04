@@ -81,19 +81,19 @@ export function Dashboard() {
         </div>
       </div>
 
-      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4 font-mono">
         {[
           { label: "Total Interrogations", value: stats.totalGenerated, sub: "Session & Locker Scans", tone: "text-azure" },
           { label: "Preserved Dossiers", value: stats.list.length, sub: "Saved in Local Locker", tone: "text-bone" },
           { label: "Critical Threat Detections", value: stats.highRisk, sub: "Risk Score ≥ 65", tone: "text-signal" },
           { label: "Verified Claims Proved", value: stats.verifiedClaims, sub: "Regulatory Registry Hits", tone: "text-emerald" },
         ].map((card) => (
-          <div key={card.label} className="panel-flat p-5 border border-line-2 bg-surface-1/90 rounded-2xl glass-card-hover">
+          <div key={card.label} className="bg-[#090b0e] p-5">
             <div className="flex items-center justify-between">
-              <span className="kicker !text-dim">{card.label}</span>
+              <span className="text-[10px] uppercase tracking-wider text-dim">{card.label}</span>
               <span className={`num text-2xl font-bold ${card.tone}`}>{card.value}</span>
             </div>
-            <p className="mt-2 text-xs font-mono text-dim">{card.sub}</p>
+            <p className="mt-2 text-[10.5px] text-dim">{card.sub}</p>
           </div>
         ))}
       </div>

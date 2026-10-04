@@ -99,83 +99,103 @@ export function LockerApp() {
       </div>
 
       {!entries.length ? (
-        <div className="panel mt-8 px-6 py-10 text-center">
-          <p className="kicker">{dict.locker.emptyTitle}</p>
-          <p className="mx-auto mt-3 max-w-md text-[14.5px] leading-relaxed text-mist">{dict.locker.emptyBody}</p>
-          <Link className="btn btn-primary mt-5 !px-5 !py-2.5" href="/investigate">
+        <div className="border border-line bg-[#080b0f] mt-8 p-10 text-center font-mono text-xs">
+          <p className="kicker !text-bone">{dict.locker.emptyTitle}</p>
+          <p className="mx-auto mt-2 max-w-md text-xs text-mist font-sans leading-relaxed">{dict.locker.emptyBody}</p>
+          <Link className="btn btn-primary mt-6 !px-6 !py-2.5 text-xs font-mono uppercase font-bold" href="/investigate">
             {dict.hero.cta}
           </Link>
         </div>
       ) : !visible.length ? (
-        <div className="mt-8">
+        <div className="mt-8 border border-line p-6 bg-[#080b0f] font-mono text-xs text-dim">
           <Empty text={dict.locker.noResults} />
         </div>
       ) : (
-        <ul className="mt-6 space-y-3">
-          {visible.map((entry) => {
-            const report = entry.report;
-            return (
-              <li
-                key={entry.id}
-                className="panel-flat glass-card-hover flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl border border-line-2 bg-surface-1/90"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <span className="font-mono text-xs font-bold text-bone bg-surface-2 px-2.5 py-0.5 rounded border border-line-2">
-                      #{entry.incident}
-                    </span>
-                    <Badge tone={LEVEL_TONE[report.risk.level]}>
-                      {report.risk.score}/100 · {dict.risk.levels[report.risk.level].label}
-                    </Badge>
-                    <span className="text-xs font-medium text-azure">
-                      {dict.inputKinds[report.input.kind]}
-                    </span>
-                    <span className="text-xs text-dim">·</span>
-                    <span className="text-xs text-mist font-mono">
-                      {fmt(dict.locker.signalsCount, { count: report.signals.length })}
-                    </span>
-                    <span className="text-xs text-dim">·</span>
-                    <span className="text-xs text-dim font-mono">
-                      {new Date(entry.savedAt).toLocaleDateString()}
+        <div className="mt-6 border border-line bg-[#080b0f] font-mono text-xs">
+          {/* Docket Table Header */}
+          <div className="hidden md:grid grid-cols-[140px_130px_100px_1fr_140px] border-b border-line bg-[#0c0f15] px-4 py-2.5 text-[10.5px] uppercase tracking-wider text-dim">
+            <span>CASE / DOCKET</span>
+            <span>THREAT RATING</span>
+            <span>VECTOR</span>
+            <span>EXCERPT / SUSPECT ENTITIES</span>
+            <span className="text-right">ACTIONS</span>
+          </div>
+
+          <div className="divide-y divide-line">
+            {visible.map((entry) => {
+              const report = entry.report;
+              return (
+                <div
+                  key={entry.id}
+                  className="flex flex-col md:grid md:grid-cols-[140px_130px_100px_1fr_140px] items-start md:items-center px-4 py-3 hover:bg-[#0d1016] transition-colors gap-2 md:gap-0"
+                >
+                  {/* Case ID */}
+                  <div>
+                    <span className="font-bold text-azure">#{entry.incident}</span>
+                    <span className="block text-[10px] text-dim">{new Date(entry.savedAt).toLocaleDateString()}</span>
+                  </div>
+
+                  {/* Threat Rating */}
+                  <div>
+                    <span
+                      className={`inline-block px-1.5 py-0.5 text-[10px] font-bold border ${
+                        report.risk.score >= 65
+                          ? "bg-signal/15 text-signal border-signal/30"
+                          : report.risk.score >= 35
+                          ? "bg-amber/15 text-amber border-amber/30"
+                          : "bg-emerald/15 text-emerald border-emerald/30"
+                      }`}
+                    >
+                      {report.risk.score}/100 {report.risk.level}
                     </span>
                   </div>
 
-                  <p className="mt-2 text-sm text-bone font-mono line-clamp-2 bg-surface-0/60 p-2.5 rounded-lg border border-line/60">
-                    "{report.input.excerpt}"
-                  </p>
+                  {/* Input Vector */}
+                  <div>
+                    <span className="text-mist uppercase text-[11px]">{dict.inputKinds[report.input.kind]}</span>
+                  </div>
 
-                  {report.entities.length > 0 && (
-                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                      <span className="text-[11px] font-mono text-dim uppercase">Entities:</span>
-                      {report.entities.slice(0, 3).map((e) => (
-                        <span key={e.value} className="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-2 text-mist border border-line">
-                          {e.value}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                  {/* Excerpt / Entities */}
+                  <div className="min-w-0 pr-4">
+                    <p className="text-bone font-mono text-[11px] truncate">
+                      "{report.input.excerpt}"
+                    </p>
+                    {report.entities.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {report.entities.slice(0, 3).map((e) => (
+                          <span key={e.value} className="text-[9.5px] text-dim border border-line px-1 bg-[#050709]">
+                            {e.value}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-                <div className="flex items-center gap-2 shrink-0 border-t md:border-t-0 border-line/60 pt-3 md:pt-0">
-                  <Link className="btn btn-primary shimmer-btn !px-4 !py-2 !text-xs font-semibold" href={`/incident/${entry.id}`}>
-                    {dict.locker.open} →
-                  </Link>
-                  <button
-                    className="btn btn-ghost !px-3 !py-2 !text-xs hover:border-signal/50 hover:text-signal"
-                    onClick={() => {
-                      if (window.confirm(dict.locker.deleteConfirm)) {
-                        removeIncident(entry.id);
-                        setEntries(listIncidents());
-                      }
-                    }}
-                  >
-                    {dict.locker.delete}
-                  </button>
+                  {/* Actions */}
+                  <div className="flex items-center justify-end gap-2 w-full md:w-auto">
+                    <Link
+                      className="btn btn-primary !py-1 !px-2.5 !text-[11px] uppercase font-bold"
+                      href={`/incident/${entry.id}`}
+                    >
+                      DOCKET →
+                    </Link>
+                    <button
+                      className="btn btn-ghost !py-1 !px-2 !text-[11px] hover:border-signal/50 hover:text-signal"
+                      onClick={() => {
+                        if (window.confirm(dict.locker.deleteConfirm)) {
+                          removeIncident(entry.id);
+                          setEntries(listIncidents());
+                        }
+                      }}
+                    >
+                      DEL
+                    </button>
+                  </div>
                 </div>
-              </li>
-            );
-          })}
-        </ul>
+              );
+            })}
+          </div>
+        </div>
       )}
 
       {entries.length ? (

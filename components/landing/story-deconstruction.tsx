@@ -80,65 +80,63 @@ export function StoryDeconstruction() {
   const [activeLayer, setActiveLayer] = useState<number>(0);
 
   return (
-    <section className="relative mx-auto w-full max-w-6xl px-5 py-24 border-t border-line/80">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+    <section className="relative mx-auto w-full max-w-6xl px-5 py-20 border-b border-line bg-[#07090c]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b border-line">
         <div>
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-signal" />
-            <p className="kicker">Scroll-Driven Threat Storytelling</p>
+            <span className="h-1.5 w-1.5 bg-signal" />
+            <p className="kicker !text-bone">FORENSIC CASE STUDY · DECONSTRUCTION</p>
           </div>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-bone md:text-4xl">
-            From Suspicious Message to Forensic Proof
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-bone md:text-3xl font-sans">
+            How Rakshak Dissects Inbound Threats
           </h2>
-          <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-mist">
-            See how Rakshak progressively dismantles a fraudulent investment lure layer by layer.
+          <p className="mt-1.5 max-w-xl text-xs font-mono leading-relaxed text-mist">
+            Follow the automated interrogation pipeline from suspicious inbound message to definitive mathematical risk verdict.
           </p>
         </div>
 
-        {/* Stepper buttons */}
-        <div className="flex items-center gap-1.5 p-1 rounded-full bg-surface-1 border border-line-2">
+        {/* Layer tabs */}
+        <div className="flex flex-wrap items-center gap-1 border border-line bg-[#090b0e] p-1 font-mono text-xs">
           {STORY_LAYERS.map((layer, idx) => (
             <button
               key={layer.id}
               onClick={() => setActiveLayer(idx)}
-              className={`px-3 py-1.5 rounded-full text-xs font-mono font-semibold transition-all ${
+              className={`px-3 py-1.5 text-[11px] uppercase transition-colors ${
                 activeLayer === idx
-                  ? "bg-bone text-surface-0 shadow-sm"
-                  : "text-mist hover:text-bone"
+                  ? "bg-bone text-ink font-semibold"
+                  : "text-mist hover:text-bone hover:bg-[#12161c]"
               }`}
             >
-              0{idx + 1}
+              0{idx + 1} {layer.stage}
             </button>
           ))}
         </div>
       </div>
 
       {/* Main Interactive Stage */}
-      <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr] items-stretch">
+      <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr] items-stretch">
         {/* Left Column: Interactive Story Progress Cards */}
-        <div className="space-y-3">
+        <div className="space-y-2 font-mono">
           {STORY_LAYERS.map((layer, idx) => {
             const isActive = activeLayer === idx;
             return (
               <div
                 key={layer.id}
                 onClick={() => setActiveLayer(idx)}
-                className={`cursor-pointer rounded-2xl p-5 border transition-all ${
+                className={`cursor-pointer border p-4 transition-colors ${
                   isActive
-                    ? "bg-surface-2/90 border-azure/50 shadow-[0_8px_30px_rgba(77,136,255,0.12)] scale-[1.01]"
-                    : "bg-surface-1/40 border-line hover:border-line-2 hover:bg-surface-1/70"
+                    ? "bg-[#0f141b] border-azure text-bone"
+                    : "bg-[#090c10] border-line hover:border-line-2 text-mist"
                 }`}
               >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs font-mono text-dim">{layer.stage}</span>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${layer.badgeColor}`}>
-                    {layer.badge}
-                  </span>
+                <div className="flex items-center justify-between gap-3 text-[10.5px]">
+                  <span className="text-dim">0{idx + 1} // {layer.stage}</span>
+                  <span className="text-azure">{layer.badge}</span>
                 </div>
-                <h3 className={`mt-2 text-base font-semibold ${isActive ? "text-bone" : "text-mist"}`}>
+                <h3 className={`mt-1.5 text-sm font-sans font-semibold ${isActive ? "text-bone" : "text-mist"}`}>
                   {layer.title}
                 </h3>
-                <p className="mt-1 text-xs text-dim leading-relaxed">
+                <p className="mt-1 text-[11px] text-dim font-sans leading-relaxed line-clamp-2">
                   {layer.detail}
                 </p>
               </div>
@@ -147,43 +145,40 @@ export function StoryDeconstruction() {
         </div>
 
         {/* Right Column: Live Deconstruction Inspector Terminal */}
-        <div className="panel p-6 flex flex-col justify-between relative overflow-hidden bg-surface-1/90 border-azure/30 shadow-2xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-azure/5 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="border border-line bg-[#080b0f] p-6 flex flex-col justify-between">
           <div>
             {/* Terminal Header */}
-            <div className="flex items-center justify-between border-b border-line pb-4">
+            <div className="flex items-center justify-between border-b border-line pb-3 font-mono text-xs">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-signal/80" />
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                <span className="ml-2 font-mono text-xs text-dim">rakshak-inspector://layer-0{activeLayer + 1}</span>
+                <span className="w-2 h-2 bg-signal" />
+                <span className="text-bone font-semibold">CASE RX-2026-0417</span>
+                <span className="text-dim">/ DECONSTRUCTION</span>
               </div>
-              <span className="font-mono text-xs text-azure font-semibold">
-                LAYER {activeLayer + 1} / {STORY_LAYERS.length}
+              <span className="text-[11px] text-azure">
+                PHASE 0{activeLayer + 1} OF 06
               </span>
             </div>
 
             {/* Active Content Inspection */}
-            <div className="mt-6">
-              <div className="flex items-center justify-between">
-                <span className="kicker text-azure">INSPECTION FOCUS</span>
+            <div className="mt-5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="kicker !text-dim">EXTRACTED EVIDENCE VECTOR</span>
                 {STORY_LAYERS[activeLayer].metric && (
-                  <span className="text-xs font-mono font-bold text-bone px-2 py-0.5 rounded bg-white/5 border border-line-2">
+                  <span className="text-[11px] font-mono font-bold text-signal bg-signal/10 border border-signal/30 px-2 py-0.5">
                     {STORY_LAYERS[activeLayer].metric}
                   </span>
                 )}
               </div>
 
-              <div className="mt-4 rounded-xl bg-surface-0 border border-line-2 p-4 font-mono text-sm leading-relaxed text-bone whitespace-pre-line">
+              <div className="border border-line bg-[#050709] p-4 font-mono text-xs leading-relaxed text-bone whitespace-pre-line border-l-2 border-l-azure">
                 {STORY_LAYERS[activeLayer].content}
               </div>
 
-              <div className="mt-5 p-4 rounded-xl bg-azure/5 border border-azure/20">
-                <p className="text-xs font-mono font-semibold text-azure mb-1 uppercase tracking-wider">
-                  Cryptographic & Legal Reasoning
+              <div className="mt-4 p-4 border border-line bg-[#090d13]">
+                <p className="text-[10.5px] font-mono uppercase tracking-wider text-azure mb-1">
+                  Legal & Empirical Analysis
                 </p>
-                <p className="text-xs text-mist leading-relaxed">
+                <p className="text-xs text-mist font-sans leading-relaxed">
                   {STORY_LAYERS[activeLayer].detail}
                 </p>
               </div>
@@ -191,15 +186,15 @@ export function StoryDeconstruction() {
           </div>
 
           {/* Bottom Action Footer */}
-          <div className="mt-8 pt-4 border-t border-line flex items-center justify-between">
-            <span className="text-xs text-dim">
-              Explore the live investigation terminal:
+          <div className="mt-6 pt-4 border-t border-line flex items-center justify-between font-mono text-xs">
+            <span className="text-dim">
+              SYSTEM STATUS: INTERROGATION ACTIVE
             </span>
             <Link
               href="/investigate?demo=guaranteed_returns"
-              className="btn btn-primary shimmer-btn !py-2 !px-4 !text-xs font-semibold"
+              className="btn btn-primary !py-1.5 !px-3.5 !text-xs font-mono uppercase"
             >
-              Interrogate This Threat →
+              Examine Full Case Docket →
             </Link>
           </div>
         </div>
