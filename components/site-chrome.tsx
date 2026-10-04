@@ -19,17 +19,39 @@ export function BrandMark({ size = 26 }: { size?: number }) {
   );
 }
 
-function NavLink({ href, label, active }: { href: string; label: string; active: boolean }) {
+function NavLink({
+  href,
+  label,
+  active,
+  badge,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+  badge?: string | number;
+}) {
   return (
     <Link
       href={href}
-      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+      className={`relative flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium transition-colors duration-150 ${
         active
-          ? "bg-white/[0.08] text-bone font-semibold"
-          : "text-mist hover:text-bone hover:bg-white/[0.04]"
+          ? "text-bone font-semibold"
+          : "text-mist hover:text-bone hover:bg-white/[0.04] rounded-md"
       }`}
     >
-      {label}
+      <span>{label}</span>
+      {badge !== undefined && (
+        <span className="font-mono text-[10px] text-dim bg-white/[0.06] border border-white/[0.06] px-1.5 py-0.2 rounded">
+          {badge}
+        </span>
+      )}
+      {/* Subtle institutional active underline indicator */}
+      {active && (
+        <span
+          className="absolute -bottom-[17px] left-2 right-2 h-[2px] bg-bone rounded-full transition-all"
+          aria-hidden="true"
+        />
+      )}
     </Link>
   );
 }
@@ -39,42 +61,100 @@ export function SiteNav() {
   const pathname = usePathname();
 
   return (
-    <header className="no-print sticky top-0 z-40 border-b border-white/[0.07] bg-[#0a0b0e]/90 backdrop-blur-xl">
+    <header className="no-print sticky top-0 z-40 border-b border-white/[0.08] bg-[#090b0e]/95 backdrop-blur-md">
       <a
         href="#content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-bone focus:px-4 focus:py-2 focus:text-xs focus:font-sans focus:text-ink"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-md focus:bg-bone focus:px-4 focus:py-2 focus:text-xs focus:font-sans focus:text-ink"
       >
         {dict.common.skipToContent}
       </a>
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-6 px-5 font-sans">
-        <Link href="/" className="flex items-center gap-2.5 text-bone">
-          <BrandMark size={20} />
-          <span className="text-[14px] font-bold tracking-tight font-sans">{dict.brand.name}</span>
-          <span className="hidden text-[11px] font-normal tracking-normal text-dim sm:inline border-l border-white/[0.08] pl-2.5">
-            Financial threat intelligence
-          </span>
-        </Link>
+      
+      {/* 68px institutional header bar */}
+      <div className="mx-auto flex h-[68px] w-full max-w-7xl items-center justify-between px-6 font-sans">
+        
+        {/* LEFT: Brand area */}
+        <div className="flex items-center gap-4 shrink-0">
+          <Link href="/" className="group flex items-center gap-3 text-bone focus-visible:outline-none">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.1] bg-[#12151b] transition-colors group-hover:border-white/[0.2]">
+              <BrandMark size={18} />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[14.5px] font-semibold tracking-tight text-bone font-sans leading-none">
+                {dict.brand.name}
+              </span>
+              <span className="mt-1 text-[9.5px] font-medium tracking-[0.14em] uppercase text-dim leading-none">
+                FINANCIAL THREAT INTELLIGENCE
+              </span>
+            </div>
+          </Link>
 
-        <nav className="ml-2 hidden items-center gap-1.5 md:flex">
-          <NavLink href="/investigate" label={dict.nav.investigate} active={pathname.startsWith("/investigate")} />
-          <NavLink href="/locker" label={dict.nav.locker} active={pathname.startsWith("/locker")} />
-          <NavLink href="/dashboard" label={dict.nav.dashboard} active={pathname.startsWith("/dashboard")} />
-          <NavLink href="/extension" label={dict.nav.extension ?? "Shield Extension"} active={pathname.startsWith("/extension")} />
-          <NavLink href="/settings" label={dict.nav.settings} active={pathname.startsWith("/settings")} />
+          {/* Subtle vertical divider after brand */}
+          <div className="hidden h-7 w-[1px] bg-white/[0.08] sm:block" aria-hidden="true" />
+        </div>
+
+        {/* CENTER: Primary Navigation */}
+        <nav className="hidden items-center gap-2 md:flex">
+          <NavLink
+            href="/investigate"
+            label="Investigate"
+            active={pathname.startsWith("/investigate")}
+          />
+          <NavLink
+            href="/locker"
+            label="Cases"
+            active={pathname.startsWith("/locker") || pathname.startsWith("/incident")}
+          />
+          <NavLink
+            href="/dashboard"
+            label="Threat Center"
+            active={pathname.startsWith("/dashboard")}
+          />
+          <NavLink
+            href="/settings"
+            label={dict.nav.settings}
+            active={pathname.startsWith("/settings")}
+          />
         </nav>
 
-        <div className="ml-auto flex items-center gap-3">
-          <label className="hidden cursor-pointer items-center gap-2 text-xs text-mist sm:flex">
-            <input
-              type="checkbox"
-              className="h-3.5 w-3.5 accent-[#f2a93b]"
-              checked={simple}
-              onChange={(e) => setSimple(e.target.checked)}
-              disabled={!ready}
-            />
-            {dict.common.simpleMode}
-          </label>
+        {/* RIGHT: Actions & Utilities */}
+        <div className="flex items-center gap-4 shrink-0">
+          {/* Extension / Shield Utility indicator */}
+          <Link
+            href="/extension"
+            className={`hidden items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md border transition-colors lg:inline-flex ${
+              pathname.startsWith("/extension")
+                ? "bg-white/[0.08] text-bone border-white/[0.15]"
+                : "text-mist hover:text-bone border-white/[0.06] hover:bg-white/[0.03]"
+            }`}
+            title="Browser Shield Extension status"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-[#35b779]" />
+            <span>Shield</span>
+          </Link>
 
+          {/* Simple Mode Toggle */}
+          <div className="hidden items-center gap-2 sm:flex">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={simple}
+              disabled={!ready}
+              onClick={() => setSimple(!simple)}
+              className="switch-toggle"
+              data-checked={simple ? "true" : "false"}
+              title="Toggle Simple Mode explanations"
+            >
+              <span className="switch-toggle-thumb" />
+            </button>
+            <span className="text-xs text-mist select-none font-medium">
+              {dict.common.simpleMode}
+            </span>
+          </div>
+
+          {/* Subtle vertical separator */}
+          <div className="hidden h-4 w-[1px] bg-white/[0.08] sm:block" aria-hidden="true" />
+
+          {/* Language Selector */}
           <div className="seg" role="tablist" aria-label={dict.common.language}>
             {LANGS.map((l) => (
               <button
@@ -90,17 +170,23 @@ export function SiteNav() {
             ))}
           </div>
 
-          <Link href="/investigate" className="btn btn-primary hidden !py-2 !text-[13px] sm:inline-flex">
-            {dict.nav.cta}
+          {/* Compact Premium Analyze CTA */}
+          <Link
+            href="/investigate"
+            className="flex items-center gap-1.5 rounded-lg border border-white/[0.18] bg-bone px-3.5 py-1.5 text-xs font-semibold text-[#090b0e] transition-all hover:bg-white hover:border-white shadow-sm"
+          >
+            <span>Analyze</span>
+            <span className="text-[11px] leading-none" aria-hidden="true">→</span>
           </Link>
         </div>
       </div>
 
-      <nav className="flex items-center gap-3 overflow-x-auto border-t border-line px-5 py-2.5 md:hidden">
-        <NavLink href="/investigate" label={dict.nav.investigate} active={pathname.startsWith("/investigate")} />
-        <NavLink href="/locker" label={dict.nav.locker} active={pathname.startsWith("/locker")} />
-        <NavLink href="/dashboard" label={dict.nav.dashboard} active={pathname.startsWith("/dashboard")} />
-        <NavLink href="/extension" label={dict.nav.extension ?? "Shield Extension"} active={pathname.startsWith("/extension")} />
+      {/* Mobile Sub-Navigation Bar */}
+      <nav className="flex items-center gap-2 overflow-x-auto border-t border-white/[0.06] px-5 py-2 md:hidden bg-[#0c0f14]">
+        <NavLink href="/investigate" label="Investigate" active={pathname.startsWith("/investigate")} />
+        <NavLink href="/locker" label="Cases" active={pathname.startsWith("/locker") || pathname.startsWith("/incident")} />
+        <NavLink href="/dashboard" label="Threat Center" active={pathname.startsWith("/dashboard")} />
+        <NavLink href="/extension" label="Shield" active={pathname.startsWith("/extension")} />
         <NavLink href="/settings" label={dict.nav.settings} active={pathname.startsWith("/settings")} />
       </nav>
     </header>
