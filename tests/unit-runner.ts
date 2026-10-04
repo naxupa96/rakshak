@@ -398,6 +398,31 @@ it("detects synthetic speech markers & acoustic anomaly in cloned police audio",
   assert.ok(report.detectedVoiceAnomalies.length >= 2);
 });
 
+console.log("\n--- [Ultra-Frontier Defenses] Crypto USDT Tracer & Multi-Hop Mule Dark Money Graph ---");
+
+it("identifies Tron TRC-20 high-velocity crypto mixer and off-ramp wallets", async () => {
+  const { traceCryptoWallets } = await import("../lib/analyze/crypto-mule-graph");
+  const text = "Transfer USDT liquidity directly to wallet: T9yD14Nj9j7xAB4dbGeP7D1gqaP9p9p9p1 on Tron network";
+  const traces = traceCryptoWallets(text);
+  assert.equal(traces.length, 1);
+  assert.equal(traces[0].chain, "TRON_TRC20");
+  assert.equal(traces[0].assetSymbol, "USDT");
+  assert.equal(traces[0].isKnownMixerOrMule, true);
+  assert.ok(traces[0].riskScore >= 80);
+});
+
+it("constructs multi-hop layering dark-money graph with exfiltration latency metrics", async () => {
+  const { buildMuleHopGraph } = await import("../lib/analyze/crypto-mule-graph");
+  const graph = buildMuleHopGraph("inc-dark-101", "Transfer to T9yD14Nj9j7xAB4dbGeP7D1gqaP9p9p9p1", "SBIN0005432", "mule@okaxis");
+  assert.equal(graph.nodes.length, 4);
+  assert.equal(graph.nodes[0].category, "victim");
+  assert.equal(graph.nodes[1].category, "layer1_mule");
+  assert.equal(graph.nodes[2].category, "layer2_aggregator");
+  assert.equal(graph.nodes[3].category, "p2p_crypto_offramp");
+  assert.ok(graph.totalLayeringMinutes < 30);
+  assert.ok(graph.edges.length >= 3);
+});
+
 (async () => {
   for (const t of tests) {
     try {

@@ -32,6 +32,9 @@ import { PdfForensicCard } from "@/components/report/pdf-forensic-card";
 import { VpaProbeCard } from "@/components/report/vpa-probe-card";
 import { AudioForensicCard } from "@/components/report/audio-forensic-card";
 import { ScamSimulatorModal } from "@/components/report/scam-simulator-modal";
+import { MultiHopMuleGraphCard } from "@/components/report/multi-hop-mule-graph-card";
+import { CryptoWalletCard } from "@/components/report/crypto-wallet-card";
+import { CounterBaitModal } from "@/components/report/counter-bait-modal";
 import { exportReportToStix21 } from "@/lib/analyze/stix";
 
 /** Colour used for a risk tone in text and chart marks. */
@@ -179,6 +182,7 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
   const [sandboxOpen, setSandboxOpen] = useState(false);
   const [advisoryOpen, setAdvisoryOpen] = useState(false);
   const [simulatorOpen, setSimulatorOpen] = useState(false);
+  const [baitOpen, setBaitOpen] = useState(false);
   const prevScan = useMemo(() => {
     return report.input?.text ? getPreviousScan(report.input.text) : null;
   }, [report.input?.text]);
@@ -323,6 +327,13 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
           >
             🎮 Defense Sandbox
           </button>
+          <button
+            className="btn btn-ghost !py-2 !text-[13px] !text-red-400 !border-red-500/30 hover:!bg-red-500/10"
+            onClick={() => setBaitOpen(true)}
+            title="Generate AI Counter-Bait to stall scammers and extract mule accounts"
+          >
+            🤖 AI Honeypot Bait
+          </button>
           <button className="btn btn-ghost !py-2 !text-[13px]" onClick={onShare}>
             {copied ? dict.report.shareSuccess : dict.report.shareIncident}
           </button>
@@ -445,6 +456,16 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
       {/* Acoustic & Deepfake Voice Note Forensics */}
       {report.audioForensics && report.audioForensics.isAudio && (
         <AudioForensicCard audio={report.audioForensics} />
+      )}
+
+      {/* Multi-Hop Mule Layering & Dark Money Topology Graph */}
+      {report.muleGraph && (
+        <MultiHopMuleGraphCard graph={report.muleGraph} />
+      )}
+
+      {/* Cryptocurrency & USDT Mixer Off-Ramp Intelligence */}
+      {report.cryptoTrace && report.cryptoTrace.length > 0 && (
+        <CryptoWalletCard traces={report.cryptoTrace} />
       )}
 
       {report.insufficientEvidence ? (
@@ -854,6 +875,11 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
       <ScamSimulatorModal
         isOpen={simulatorOpen}
         onClose={() => setSimulatorOpen(false)}
+      />
+
+      <CounterBaitModal
+        isOpen={baitOpen}
+        onClose={() => setBaitOpen(false)}
       />
     </div>
   );

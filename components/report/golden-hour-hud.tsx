@@ -110,6 +110,36 @@ export function GoldenHourHud({ risk, incidentId }: GoldenHourHudProps) {
         </div>
       </div>
 
+      {/* Bank Quick Lock Matrix */}
+      <div className="mt-3 pt-3 border-t border-neutral-800/80">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wide">
+            1-Click Bank Emergency Freeze (SMS / Net-Banking):
+          </span>
+          <span className="text-[10px] text-neutral-400">Select your bank to dispatch instant block:</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { bank: "SBI", sms: "sms:9223966666?body=BLOCK%20UPI", url: "https://retail.onlinesbi.sbi/retail/lockcard.htm" },
+            { bank: "HDFC", sms: "sms:5676712?body=BLOCK%20UPI", url: "https://netbanking.hdfcbank.com/netbanking/" },
+            { bank: "ICICI", sms: "sms:5676766?body=BLOCK%20UPI", url: "https://infinity.icicibank.com/corp/AuthenticationController" },
+            { bank: "AXIS", sms: "sms:5676782?body=BLOCK%20UPI", url: "https://omni.axisbank.co.in/axisretail/" },
+            { bank: "KOTAK", sms: "sms:9971056767?body=BLOCK%20UPI", url: "https://netbanking.kotak.com/knb2/" },
+            { bank: "PNB", sms: "sms:5607040?body=BLOCK%20UPI", url: "https://netpnb.com" },
+          ].map((b) => (
+            <div key={b.bank} className="flex items-center rounded-lg bg-neutral-900 border border-neutral-800 overflow-hidden text-xs">
+              <span className="px-2.5 py-1 font-mono font-bold text-neutral-200 border-r border-neutral-800">{b.bank}</span>
+              <a href={b.sms} className="px-2 py-1 text-[11px] text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors">
+                📱 Lock SMS
+              </a>
+              <a href={b.url} target="_blank" rel="noopener noreferrer" className="px-2 py-1 text-[11px] text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 border-l border-neutral-800 transition-colors">
+                🌐 Portal
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Immediate Triage Checklist */}
       <div className="mt-3 pt-3 border-t border-neutral-800/80 grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
         <div className="flex items-center gap-2 text-neutral-300">

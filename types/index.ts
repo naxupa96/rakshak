@@ -212,6 +212,41 @@ export interface AudioForensicReport {
   verdict: "likely_deepfake_clone" | "suspicious_synthetic_audio" | "authentic_natural_voice";
 }
 
+export interface CryptoWalletTrace {
+  address: string;
+  chain: "TRON_TRC20" | "ETHEREUM_ERC20" | "BITCOIN" | "UNKNOWN";
+  assetSymbol: "USDT" | "BTC" | "ETH" | "CRYPTO";
+  isKnownMixerOrMule: boolean;
+  clusterTag?: string;
+  riskScore: number;
+  flags: string[];
+  recommendedAction: string;
+}
+
+export interface MuleHopNode {
+  id: string;
+  label: string;
+  category: "victim" | "layer1_mule" | "layer2_aggregator" | "p2p_crypto_offramp" | "illicit_mixer";
+  institution: string;
+  accountOrAddress: string;
+  location?: string;
+  flaggedZone?: string;
+}
+
+export interface MuleHopGraph {
+  incidentId: string;
+  nodes: MuleHopNode[];
+  edges: {
+    from: string;
+    to: string;
+    amount?: string;
+    channel: "IMPS" | "UPI" | "RTGS" | "CRYPTO_P2P" | "USDT_TRANSFER";
+    latencyMinutes: number;
+  }[];
+  totalLayeringMinutes: number;
+  estimatedLienWindowMinutes: number;
+}
+
 export interface StixBundle {
   type: "bundle";
   id: string;
@@ -439,6 +474,8 @@ export interface AnalysisReport {
   pdfForensics?: PdfForensicReport;
   vpaProbe?: VpaProbeResult[];
   audioForensics?: AudioForensicReport;
+  cryptoTrace?: CryptoWalletTrace[];
+  muleGraph?: MuleHopGraph;
 }
 
 export interface AnalyzeRequest {

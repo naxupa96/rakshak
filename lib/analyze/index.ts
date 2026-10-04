@@ -27,6 +27,7 @@ import { inspectApkPayload } from "./apk";
 import { analyzePdfForensics } from "./pdf-forensics";
 import { probeAllVpas } from "./vpa-probe";
 import { analyzeAudioForensics } from "./audio-forensics";
+import { traceCryptoWallets, buildMuleHopGraph } from "./crypto-mule-graph";
 
 export interface AnalyzeInput {
   kind: InputKind;
@@ -270,6 +271,8 @@ export async function analyze(input: AnalyzeInput): Promise<AnalysisReport> {
     pdfForensics: analyzePdfForensics(normalized.text),
     vpaProbe: probeAllVpas(normalized.text, comparison?.claimedName),
     audioForensics: analyzeAudioForensics(normalized.text),
+    cryptoTrace: traceCryptoWallets(normalized.text),
+    muleGraph: buildMuleHopGraph("inc_" + Math.random().toString(36).slice(2, 8), normalized.text, undefined, normalized.phones[0]),
   });
 }
 
