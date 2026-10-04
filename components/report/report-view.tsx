@@ -29,6 +29,9 @@ import { AdvisoryDrawer } from "@/components/report/advisory-drawer";
 import { GoldenHourHud } from "@/components/report/golden-hour-hud";
 import { ApkInspectionCard } from "@/components/report/apk-inspection-card";
 import { PdfForensicCard } from "@/components/report/pdf-forensic-card";
+import { VpaProbeCard } from "@/components/report/vpa-probe-card";
+import { AudioForensicCard } from "@/components/report/audio-forensic-card";
+import { ScamSimulatorModal } from "@/components/report/scam-simulator-modal";
 import { exportReportToStix21 } from "@/lib/analyze/stix";
 
 /** Colour used for a risk tone in text and chart marks. */
@@ -175,6 +178,7 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
   const [dossierOpen, setDossierOpen] = useState(false);
   const [sandboxOpen, setSandboxOpen] = useState(false);
   const [advisoryOpen, setAdvisoryOpen] = useState(false);
+  const [simulatorOpen, setSimulatorOpen] = useState(false);
   const prevScan = useMemo(() => {
     return report.input?.text ? getPreviousScan(report.input.text) : null;
   }, [report.input?.text]);
@@ -312,6 +316,13 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
           >
             💬 Ask Advisor
           </button>
+          <button
+            className="btn btn-ghost !py-2 !text-[13px] !text-amber-400 !border-amber-500/30 hover:!bg-amber-500/10"
+            onClick={() => setSimulatorOpen(true)}
+            title="Launch Interactive Counter-Scam Defense Sandbox"
+          >
+            🎮 Defense Sandbox
+          </button>
           <button className="btn btn-ghost !py-2 !text-[13px]" onClick={onShare}>
             {copied ? dict.report.shareSuccess : dict.report.shareIncident}
           </button>
@@ -424,6 +435,16 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
       {/* PDF Regulatory Certificate & Digital Signature Forensics */}
       {report.pdfForensics && report.pdfForensics.isPdf && (
         <PdfForensicCard pdf={report.pdfForensics} />
+      )}
+
+      {/* UPI Payment Service Provider (PSP) Routing & Mule Probe */}
+      {report.vpaProbe && report.vpaProbe.length > 0 && (
+        <VpaProbeCard probes={report.vpaProbe} />
+      )}
+
+      {/* Acoustic & Deepfake Voice Note Forensics */}
+      {report.audioForensics && report.audioForensics.isAudio && (
+        <AudioForensicCard audio={report.audioForensics} />
       )}
 
       {report.insufficientEvidence ? (
@@ -828,6 +849,11 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
         report={report}
         isOpen={advisoryOpen}
         onClose={() => setAdvisoryOpen(false)}
+      />
+
+      <ScamSimulatorModal
+        isOpen={simulatorOpen}
+        onClose={() => setSimulatorOpen(false)}
       />
     </div>
   );

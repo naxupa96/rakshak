@@ -375,6 +375,29 @@ it("exports incident IOCs to valid OASIS STIX 2.1 JSON bundle", async () => {
   assert.ok(bundle.objects.some((o) => o.type === "indicator" && o.pattern?.includes("scammer@okaxis")));
 });
 
+console.log("\n--- [Next-Gen Innovations] UPI Mule VPA Probing & Deepfake Voice Analysis ---");
+
+it("probes destination VPA and detects mismatched individual P2P account claiming corporate identity", async () => {
+  const { probeVpaHandle } = await import("../lib/analyze/vpa-probe");
+  const res = probeVpaHandle("9876543210@okaxis", "Zerodha Broking Limited");
+  assert.equal(res.vpa, "9876543210@okaxis");
+  assert.equal(res.pspBank, "Axis Bank (Google Pay)");
+  assert.equal(res.accountType, "SUSPICIOUS_MULE");
+  assert.equal(res.entityMatchVerdict, "MISMATCHED_PERSONAL_ACCOUNT");
+  assert.equal(res.riskFlag, true);
+  assert.ok(res.advisory.includes("Critical Discrepancy"));
+});
+
+it("detects synthetic speech markers & acoustic anomaly in cloned police audio", async () => {
+  const { analyzeAudioForensics } = await import("../lib/analyze/audio-forensics");
+  const report = analyzeAudioForensics("police_arrest_notice_officer.mp3 CBI officer speaking on call");
+  assert.equal(report.isAudio, true);
+  assert.equal(report.syntheticLikelihood, "high");
+  assert.equal(report.verdict, "likely_deepfake_clone");
+  assert.ok(report.roboticCadenceScore >= 75);
+  assert.ok(report.detectedVoiceAnomalies.length >= 2);
+});
+
 (async () => {
   for (const t of tests) {
     try {

@@ -8,6 +8,7 @@ import { listIncidents, removeIncident, type LockerEntry } from "@/lib/storage/l
 import { Badge, Empty, Section, LEVEL_TONE } from "@/components/ui";
 import { signalText } from "@/lib/localization";
 import { useAfterMount } from "@/lib/hooks";
+import { IndiaThreatHeatmap } from "@/components/dashboard/india-threat-heatmap";
 
 const LEVELS: RiskLevel[] = ["LOW", "MODERATE", "ELEVATED", "HIGH", "CRITICAL"];
 
@@ -84,8 +85,13 @@ export function Dashboard() {
         ))}
       </div>
 
+      {/* National Cyber-Financial Threat Heatmap */}
+      <div className="mt-8">
+        <IndiaThreatHeatmap />
+      </div>
+
       {!stats.list.length ? (
-        <div className="mt-10">
+        <div className="mt-8">
           <Empty text={dict.dashboard.empty} />
           <div className="mt-4 flex flex-wrap gap-3">
             <Link className="btn btn-primary" href="/investigate">
@@ -98,7 +104,7 @@ export function Dashboard() {
         </div>
       ) : (
         <>
-          <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
             <Section title={dict.dashboard.recent}>
               <ul className="space-y-2.5">
                 {stats.list.slice(0, 8).map((entry) => (

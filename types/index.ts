@@ -189,6 +189,29 @@ export interface PdfForensicReport {
   tamperIndicators: string[];
 }
 
+export interface VpaProbeResult {
+  vpa: string;
+  handle: string;
+  pspBank: string;
+  accountType: "P2M_MERCHANT" | "P2P_INDIVIDUAL" | "SUSPICIOUS_MULE" | "UNKNOWN";
+  claimedEntity?: string;
+  entityMatchVerdict: "OFFICIAL_MERCHANT_MATCH" | "MISMATCHED_PERSONAL_ACCOUNT" | "UNREGISTERED_BURNER_WALLET";
+  riskFlag: boolean;
+  advisory: string;
+}
+
+export interface AudioForensicReport {
+  isAudio: boolean;
+  fileName?: string;
+  durationSec?: number;
+  syntheticLikelihood: "high" | "moderate" | "low" | "natural";
+  roboticCadenceScore: number; // 0-100
+  pitchVarianceScore: number;  // 0-100
+  ambientNoiseFloorDb: number; // e.g. -65dB (extremely clean = generator artifact)
+  detectedVoiceAnomalies: string[];
+  verdict: "likely_deepfake_clone" | "suspicious_synthetic_audio" | "authentic_natural_voice";
+}
+
 export interface StixBundle {
   type: "bundle";
   id: string;
@@ -414,6 +437,8 @@ export interface AnalysisReport {
   sandbox?: SandboxInspection;
   apk?: ApkInspection;
   pdfForensics?: PdfForensicReport;
+  vpaProbe?: VpaProbeResult[];
+  audioForensics?: AudioForensicReport;
 }
 
 export interface AnalyzeRequest {

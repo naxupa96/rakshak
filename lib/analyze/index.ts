@@ -25,6 +25,8 @@ import { parseQrPayload } from "./qr";
 import { inspectAndDisarmUrl } from "./sandbox";
 import { inspectApkPayload } from "./apk";
 import { analyzePdfForensics } from "./pdf-forensics";
+import { probeAllVpas } from "./vpa-probe";
+import { analyzeAudioForensics } from "./audio-forensics";
 
 export interface AnalyzeInput {
   kind: InputKind;
@@ -266,6 +268,8 @@ export async function analyze(input: AnalyzeInput): Promise<AnalysisReport> {
     sandbox: input.url ? inspectAndDisarmUrl(input.url, normalized.text) : undefined,
     apk: inspectApkPayload(normalized.text),
     pdfForensics: analyzePdfForensics(normalized.text),
+    vpaProbe: probeAllVpas(normalized.text, comparison?.claimedName),
+    audioForensics: analyzeAudioForensics(normalized.text),
   });
 }
 
