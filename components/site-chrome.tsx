@@ -55,10 +55,11 @@ export function SiteNav() {
           </span>
         </Link>
 
-        <nav className="ml-2 hidden items-center gap-5 md:flex">
+        <nav className="ml-2 hidden items-center gap-4 md:flex">
           <NavLink href="/investigate" label={dict.nav.investigate} active={pathname.startsWith("/investigate")} />
           <NavLink href="/locker" label={dict.nav.locker} active={pathname.startsWith("/locker")} />
           <NavLink href="/dashboard" label={dict.nav.dashboard} active={pathname.startsWith("/dashboard")} />
+          <NavLink href="/extension" label={dict.nav.extension ?? "Shield Extension"} active={pathname.startsWith("/extension")} />
           <NavLink href="/settings" label={dict.nav.settings} active={pathname.startsWith("/settings")} />
         </nav>
 
@@ -95,10 +96,11 @@ export function SiteNav() {
         </div>
       </div>
 
-      <nav className="flex items-center gap-5 border-t border-line px-5 py-2.5 md:hidden">
+      <nav className="flex items-center gap-3 overflow-x-auto border-t border-line px-5 py-2.5 md:hidden">
         <NavLink href="/investigate" label={dict.nav.investigate} active={pathname.startsWith("/investigate")} />
         <NavLink href="/locker" label={dict.nav.locker} active={pathname.startsWith("/locker")} />
         <NavLink href="/dashboard" label={dict.nav.dashboard} active={pathname.startsWith("/dashboard")} />
+        <NavLink href="/extension" label={dict.nav.extension ?? "Shield Extension"} active={pathname.startsWith("/extension")} />
         <NavLink href="/settings" label={dict.nav.settings} active={pathname.startsWith("/settings")} />
       </nav>
     </header>
@@ -134,6 +136,12 @@ export function SiteFooter() {
             <li>
               <Link href="/dashboard" className="hover:text-bone">
                 {dict.nav.dashboard}
+              </Link>
+            </li>
+            <li>
+              <Link href="/extension" className="hover:text-bone text-azure flex items-center gap-1.5">
+                <span>🛡️</span>
+                <span>{dict.nav.extension ?? "Shield Extension"}</span>
               </Link>
             </li>
             <li>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rakshak Shield</title>
+  <style>
+    body {
+      width: 320px;
+      margin: 0;
+      padding: 16px;
+      background: #07080a;
+      color: #f0f2f5;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1f242c;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+    .status-badge {
+      font-size: 10px;
+      font-family: monospace;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(46, 184, 130, 0.15);
+      border: 1px solid rgba(46, 184, 130, 0.4);
+      color: #2eb882;
+      font-weight: 600;
+    }
+    .card {
+      background: #0f1216;
+      border: 1px solid #1f242c;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .kicker {
+      font-size: 10px;
+      font-family: monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #646d7a;
+      margin-bottom: 4px;
+    }
+    .url-text {
+      font-size: 12px;
+      font-family: monospace;
+      color: #9aa3af;
+      word-break: break-all;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 10px 0;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      box-sizing: border-box;
+      border: none;
+      transition: all 0.15s ease;
+    }
+    .btn-primary {
+      background: #f0f2f5;
+      color: #07080a;
+      margin-bottom: 8px;
+    }
+    .btn-primary:hover {
+      background: #ffffff;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid #2a313c;
+      color: #f0f2f5;
+    }
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .footer {
+      font-size: 11px;
+      color: #646d7a;
+      text-align: center;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+        <path d="M16 2.5 4.5 7v9.2c0 6.6 4.7 11.9 11.5 13.3 6.8-1.4 11.5-6.7 11.5-13.3V7L16 2.5Z" stroke="#f0f2f5" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M9.8 16.4 14 20.6l8.2-8.4" stroke="#ff4336" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>RAKSHAK SHIELD</span>
+    </div>
+    <span class="status-badge">ACTIVE</span>
+  </div>
+
+  <div class="card">
+    <div class="kicker">ACTIVE URL MONITOR</div>
+    <div id="current-url" class="url-text">Checking active tab…</div>
+  </div>
+
+  <button id="scan-btn" class="btn btn-primary">
+    Deep Scan in Rakshak Web →
+  </button>
+
+  <a href="http://localhost:3000/dashboard" target="_blank" class="btn btn-ghost">
+    Open Threat Center
+  </a>
+
+  <div class="footer">
+    SEBI & Regulatory Registry Verifier v1.0.0
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

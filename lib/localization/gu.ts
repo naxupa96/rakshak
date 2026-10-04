@@ -16,6 +16,7 @@ export const gu: Dict = {
     settings: "સેટિંગ્સ",
     investigate: "તપાસ",
     locker: "સાક્ષ્ય",
+    extension: "શીલ્ડ એક્સ્ટેન્શન",
     menu: "મેનુ",
   },
   common: {

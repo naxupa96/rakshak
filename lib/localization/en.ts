@@ -14,6 +14,7 @@ export const en = {
     settings: "Settings",
     investigate: "Investigate",
     locker: "Locker",
+    extension: "Shield Extension",
     menu: "Menu",
   },
   common: {

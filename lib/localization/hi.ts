@@ -16,6 +16,7 @@ export const hi: Dict = {
     settings: "सेटिंग्स",
     investigate: "जाँच",
     locker: "साक्ष्य",
+    extension: "शील्ड एक्सटेंशन",
     menu: "मेन्यू",
   },
   common: {
