@@ -99,71 +99,74 @@ export function LockerApp() {
       </div>
 
       {!entries.length ? (
-        <div className="border border-line bg-[#080b0f] mt-8 p-10 text-center font-mono text-xs">
+        <div className="rounded-2xl border border-white/[0.07] bg-[#121419] mt-8 p-12 text-center text-xs">
           <p className="kicker !text-bone">{dict.locker.emptyTitle}</p>
-          <p className="mx-auto mt-2 max-w-md text-xs text-mist font-sans leading-relaxed">{dict.locker.emptyBody}</p>
-          <Link className="btn btn-primary mt-6 !px-6 !py-2.5 text-xs font-mono uppercase font-bold" href="/investigate">
+          <p className="mx-auto mt-2 max-w-md text-sm text-mist leading-relaxed">{dict.locker.emptyBody}</p>
+          <Link className="btn btn-primary mt-6 !px-6 !py-2.5 text-xs font-medium" href="/investigate">
             {dict.hero.cta}
           </Link>
         </div>
       ) : !visible.length ? (
-        <div className="mt-8 border border-line p-6 bg-[#080b0f] font-mono text-xs text-dim">
+        <div className="mt-8 rounded-2xl border border-white/[0.07] p-8 bg-[#121419] text-xs text-dim">
           <Empty text={dict.locker.noResults} />
         </div>
       ) : (
-        <div className="mt-6 border border-line bg-[#080b0f] font-mono text-xs">
-          {/* Docket Table Header */}
-          <div className="hidden md:grid grid-cols-[140px_130px_100px_1fr_140px] border-b border-line bg-[#0c0f15] px-4 py-2.5 text-[10.5px] uppercase tracking-wider text-dim">
-            <span>CASE / DOCKET</span>
-            <span>THREAT RATING</span>
-            <span>VECTOR</span>
-            <span>EXCERPT / SUSPECT ENTITIES</span>
-            <span className="text-right">ACTIONS</span>
+        <div className="mt-6 rounded-2xl border border-white/[0.07] bg-[#121419] overflow-hidden text-xs">
+          {/* Investigation Table Header */}
+          <div className="hidden md:grid grid-cols-[130px_130px_100px_1fr_130px] border-b border-white/[0.06] bg-white/[0.02] px-5 py-3 text-[11px] font-medium text-dim">
+            <span>Investigation</span>
+            <span>Risk level</span>
+            <span>Source</span>
+            <span>Summary & signals</span>
+            <span className="text-right">Actions</span>
           </div>
 
-          <div className="divide-y divide-line">
+          <div className="divide-y divide-white/[0.05]">
             {visible.map((entry) => {
               const report = entry.report;
+              const isHigh = report.risk.score >= 65;
+              const isMedium = report.risk.score >= 35;
               return (
                 <div
                   key={entry.id}
-                  className="flex flex-col md:grid md:grid-cols-[140px_130px_100px_1fr_140px] items-start md:items-center px-4 py-3 hover:bg-[#0d1016] transition-colors gap-2 md:gap-0"
+                  className="flex flex-col md:grid md:grid-cols-[130px_130px_100px_1fr_130px] items-start md:items-center px-5 py-3.5 hover:bg-white/[0.02] transition-colors gap-2 md:gap-0"
                 >
                   {/* Case ID */}
                   <div>
-                    <span className="font-bold text-azure">#{entry.incident}</span>
-                    <span className="block text-[10px] text-dim">{new Date(entry.savedAt).toLocaleDateString()}</span>
+                    <span className="font-semibold text-bone font-sans">#{entry.incident}</span>
+                    <span className="block text-[11px] text-dim">{new Date(entry.savedAt).toLocaleDateString()}</span>
                   </div>
 
                   {/* Threat Rating */}
                   <div>
                     <span
-                      className={`inline-block px-1.5 py-0.5 text-[10px] font-bold border ${
-                        report.risk.score >= 65
-                          ? "bg-signal/15 text-signal border-signal/30"
-                          : report.risk.score >= 35
-                          ? "bg-amber/15 text-amber border-amber/30"
-                          : "bg-emerald/15 text-emerald border-emerald/30"
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${
+                        isHigh
+                          ? "bg-[#e5484d]/10 text-[#ff8b8e] border-[#e5484d]/20"
+                          : isMedium
+                          ? "bg-[#d99a32]/10 text-[#f5b854] border-[#d99a32]/20"
+                          : "bg-[#35b779]/10 text-[#35b779] border-[#35b779]/20"
                       }`}
                     >
-                      {report.risk.score}/100 {report.risk.level}
+                      <span className="w-1.5 h-1.5 rounded-full bg-currentColor" />
+                      {report.risk.score}/100 · {dict.risk.levels[report.risk.level].label}
                     </span>
                   </div>
 
                   {/* Input Vector */}
                   <div>
-                    <span className="text-mist uppercase text-[11px]">{dict.inputKinds[report.input.kind]}</span>
+                    <span className="text-mist text-[12px]">{dict.inputKinds[report.input.kind]}</span>
                   </div>
 
                   {/* Excerpt / Entities */}
                   <div className="min-w-0 pr-4">
-                    <p className="text-bone font-mono text-[11px] truncate">
+                    <p className="text-bone font-sans text-[12.5px] truncate">
                       "{report.input.excerpt}"
                     </p>
                     {report.entities.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
                         {report.entities.slice(0, 3).map((e) => (
-                          <span key={e.value} className="text-[9.5px] text-dim border border-line px-1 bg-[#050709]">
+                          <span key={e.value} className="text-[10px] text-mist border border-white/[0.08] px-1.5 py-0.5 rounded-md bg-white/[0.03]">
                             {e.value}
                           </span>
                         ))}
@@ -174,13 +177,13 @@ export function LockerApp() {
                   {/* Actions */}
                   <div className="flex items-center justify-end gap-2 w-full md:w-auto">
                     <Link
-                      className="btn btn-primary !py-1 !px-2.5 !text-[11px] uppercase font-bold"
+                      className="btn btn-primary !py-1 !px-3 !text-[12px] font-medium"
                       href={`/incident/${entry.id}`}
                     >
-                      DOCKET →
+                      Open report →
                     </Link>
                     <button
-                      className="btn btn-ghost !py-1 !px-2 !text-[11px] hover:border-signal/50 hover:text-signal"
+                      className="btn btn-ghost !py-1 !px-2.5 !text-[12px] hover:border-[#e5484d]/50 hover:text-[#ff8b8e]"
                       onClick={() => {
                         if (window.confirm(dict.locker.deleteConfirm)) {
                           removeIncident(entry.id);
@@ -188,7 +191,7 @@ export function LockerApp() {
                         }
                       }}
                     >
-                      DEL
+                      Delete
                     </button>
                   </div>
                 </div>

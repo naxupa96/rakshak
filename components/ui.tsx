@@ -4,15 +4,15 @@ import type { RiskLevel, Severity, VerificationStatus } from "@/types";
 export type Tone = "neutral" | "low" | "moderate" | "elevated" | "high" | "critical" | "good" | "warn" | "bad";
 
 const TONE_CLASS: Record<Tone, string> = {
-  neutral: "border-line-2 text-mist bg-white/[0.03]",
-  low: "border-emerald/40 text-emerald bg-emerald/10",
-  good: "border-emerald/40 text-emerald bg-emerald/10",
-  moderate: "border-amber/40 text-amber bg-amber/10",
-  warn: "border-amber/40 text-amber bg-amber/10",
-  elevated: "border-amber/50 text-amber bg-amber/12",
-  high: "border-signal/45 text-[#ff9d92] bg-signal/12",
-  critical: "border-signal/60 text-[#ffb4ac] bg-signal/18",
-  bad: "border-signal/45 text-[#ff9d92] bg-signal/12",
+  neutral: "border-line text-mist bg-white/[0.04]",
+  low: "border-emerald/20 text-[#35b779] bg-[#35b779]/10",
+  good: "border-emerald/20 text-[#35b779] bg-[#35b779]/10",
+  moderate: "border-amber/20 text-[#d99a32] bg-[#d99a32]/10",
+  warn: "border-amber/20 text-[#d99a32] bg-[#d99a32]/10",
+  elevated: "border-amber/30 text-[#d99a32] bg-[#d99a32]/12",
+  high: "border-signal/25 text-[#e5484d] bg-[#e5484d]/10",
+  critical: "border-signal/30 text-[#e5484d] bg-[#e5484d]/15 font-semibold",
+  bad: "border-signal/25 text-[#e5484d] bg-[#e5484d]/10",
 };
 
 export const LEVEL_TONE: Record<RiskLevel, Tone> = {

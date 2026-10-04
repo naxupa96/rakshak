@@ -1,33 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #07080a;
-  --color-ink-2: #0b0d10;
-  --color-surface-0: #07080a;
-  --color-surface-1: #0f1216;
-  --color-surface-2: #15191f;
-  --color-surface-3: #1c222b;
-  --color-panel: #111418;
-  --color-panel-2: #171b20;
-  --color-line: #1f242c;
-  --color-line-2: #2a313c;
-  --color-bone: #f0f2f5;
-  --color-mist: #9aa3af;
-  --color-dim: #646d7a;
-  --color-signal: #ff4336;
-  --color-signal-2: #b8261b;
-  --color-amber: #e69d27;
-  --color-emerald: #2eb882;
-  --color-azure: #4d88ff;
+  --color-ink: #0a0b0e;
+  --color-ink-2: #111317;
+  --color-surface-0: #0a0b0e;
+  --color-surface-1: #121419;
+  --color-surface-2: #181b22;
+  --color-surface-3: #20242d;
+  --color-panel: #14171d;
+  --color-panel-2: #1c2028;
+  --color-line: rgba(255, 255, 255, 0.07);
+  --color-line-2: rgba(255, 255, 255, 0.12);
+  --color-bone: #f4f4f1;
+  --color-mist: #9b9fa8;
+  --color-dim: #686d76;
+  --color-signal: #e5484d;
+  --color-signal-2: #c53b40;
+  --color-amber: #d99a32;
+  --color-emerald: #35b779;
+  --color-azure: #6c8eff;
 
-  --font-sans: var(--font-inter), "Noto Sans Devanagari", "Noto Sans Gujarati", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-sans: var(--font-inter), "Noto Sans Devanagari", "Noto Sans Gujarati", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-deva: var(--font-noto-deva), var(--font-inter), sans-serif;
   --font-guj: var(--font-noto-guj), var(--font-inter), sans-serif;
 
-  --radius-card: 4px;
-  --radius-panel: 4px;
-  --radius-pill: 4px;
+  --radius-sm: 8px;
+  --radius-card: 14px;
+  --radius-panel: 18px;
+  --radius-pill: 9999px;
 }
 
 :root {
@@ -41,24 +42,26 @@ html {
 
 /* Simple mode scales every rem-based utility up for older readers. */
 html[data-simple="1"] {
-  font-size: 18.5px;
+  font-size: 18px;
 }
 
 body {
   background-color: var(--color-ink);
   color: var(--color-bone);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-family: var(--font-sans);
 }
 
 ::selection {
-  background: rgba(255, 77, 61, 0.28);
+  background: rgba(108, 142, 255, 0.25);
   color: #fff;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-line-2) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
 :focus-visible {
@@ -68,14 +71,14 @@ body {
 
 @layer components {
   .panel {
-    background: #0d1014;
+    background: var(--color-surface-1);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.25);
   }
 
   .panel-flat {
-    background: #0a0c0f;
+    background: var(--color-surface-2);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
   }
@@ -85,15 +88,14 @@ body {
   }
 
   .kicker {
-    font-family: var(--font-mono);
     font-size: 11px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
+    font-weight: 600;
     color: var(--color-dim);
   }
 
   .num {
-    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
   }
 
@@ -101,12 +103,11 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    border-radius: 2px;
-    border: 1px solid var(--color-line-2);
-    background: #0f1318;
-    padding: 2px 8px;
-    font-size: 11.5px;
-    font-family: var(--font-mono);
+    border-radius: 6px;
+    border: 1px solid var(--color-line);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 3px 9px;
+    font-size: 12px;
     line-height: 1.4;
     color: var(--color-mist);
   }
@@ -116,23 +117,22 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    border-radius: 3px;
-    padding: 8px 16px;
-    font-size: 13px;
+    border-radius: var(--radius-sm);
+    padding: 9px 18px;
+    font-size: 13.5px;
     font-weight: 500;
-    letter-spacing: 0.02em;
-    transition: background-color 100ms ease, border-color 100ms ease, color 100ms ease;
+    transition: all 140ms cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
     border: 1px solid transparent;
   }
 
   .btn:active {
-    transform: translateY(1px);
+    transform: scale(0.985);
   }
 
   .btn-primary {
     background: var(--color-bone);
-    color: #07080a;
+    color: #0b0d11;
     border: 1px solid var(--color-bone);
     font-weight: 600;
   }
@@ -140,27 +140,28 @@ body {
   .btn-primary:hover {
     background: #ffffff;
     border-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
   }
 
   .btn-ghost {
-    background: #0c0f13;
-    border-color: var(--color-line-2);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--color-line);
     color: var(--color-bone);
   }
 
   .btn-ghost:hover {
-    border-color: var(--color-mist);
-    background: #14181f;
+    border-color: var(--color-line-2);
+    background: rgba(255, 255, 255, 0.07);
   }
 
   .btn-danger {
-    background: rgba(255, 67, 54, 0.1);
-    border-color: rgba(255, 67, 54, 0.4);
-    color: #ff8b80;
+    background: rgba(229, 72, 77, 0.12);
+    border-color: rgba(229, 72, 77, 0.3);
+    color: #ff9da0;
   }
 
   .btn-danger:hover {
-    background: rgba(255, 67, 54, 0.18);
+    background: rgba(229, 72, 77, 0.2);
   }
 
   .btn:disabled {
@@ -171,13 +172,13 @@ body {
 
   .field {
     width: 100%;
-    background: #090b0e;
+    background: rgba(0, 0, 0, 0.25);
     border: 1px solid var(--color-line);
-    border-radius: 2px;
-    padding: 10px 12px;
-    font-size: 13.5px;
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    font-size: 14px;
     color: var(--color-bone);
-    transition: border-color 120ms ease;
+    transition: border-color 140ms ease, background-color 140ms ease;
   }
 
   .field::placeholder {
@@ -185,33 +186,33 @@ body {
   }
 
   .field:focus {
-    border-color: var(--color-mist);
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.35);
     outline: none;
   }
 
   .seg {
     display: inline-flex;
-    padding: 2px;
-    gap: 2px;
-    background: #090b0e;
+    padding: 3px;
+    gap: 3px;
+    background: rgba(0, 0, 0, 0.35);
     border: 1px solid var(--color-line);
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
   }
 
   .seg button {
-    border-radius: 2px;
-    padding: 4px 10px;
-    font-size: 11.5px;
-    font-family: var(--font-mono);
+    border-radius: 6px;
+    padding: 4px 11px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--color-dim);
-    transition: background-color 100ms ease, color 100ms ease;
+    transition: all 120ms ease;
   }
 
   .seg button[aria-selected="true"] {
-    background: #191f27;
+    background: var(--color-surface-3);
     color: var(--color-bone);
-    border: 1px solid var(--color-line-2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 
   .seg button:hover {
@@ -242,81 +243,45 @@ body {
     mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
   }
 
-  /* Institutional Forensic Instruments & Docket Utilities */
-  .docket-table {
+  /* Premium Fintech Surfaces & Utilities */
+  .table-refined {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13.5px;
   }
-  .docket-table th {
+  .table-refined th {
     text-align: left;
-    padding: 8px 12px;
-    font-size: 10.5px;
-    font-family: var(--font-mono);
+    padding: 10px 14px;
+    font-size: 11.5px;
+    font-weight: 500;
     color: var(--color-dim);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    letter-spacing: 0.04em;
     border-bottom: 1px solid var(--color-line);
-    background: #090b0e;
+    background: var(--color-surface-1);
   }
-  .docket-table td {
-    padding: 10px 12px;
+  .table-refined td {
+    padding: 12px 14px;
     border-bottom: 1px solid var(--color-line);
     color: var(--color-bone);
   }
-  .docket-table tr:hover td {
-    background: #111418;
+  .table-refined tr:hover td {
+    background: var(--color-surface-2);
   }
 
-  .investigation-artifact {
-    background: #080a0d;
+  .investigation-card {
+    background: var(--color-surface-1);
     border: 1px solid var(--color-line);
-    font-family: var(--font-mono);
+    border-radius: var(--radius-card);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2);
   }
 
-  .glass-card {
-    background: #0d1014;
-    border: 1px solid var(--color-line);
+  .hover-lift {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease;
   }
-
-  .glass-card-hover {
-    transition: border-color 0.15s ease, background-color 0.15s ease;
-  }
-  .glass-card-hover:hover {
+  .hover-lift:hover {
+    transform: translateY(-1px);
     border-color: var(--color-line-2);
-    background: #10141a;
-  }
-
-  .glow-border {
-    border: 1px solid var(--color-line-2);
-  }
-
-  .shimmer-btn {
-    position: relative;
-  }
-
-  /* Scanline sweep animation for OCR and terminal scanning */
-  .scanline-sweep {
-    position: relative;
-    overflow: hidden;
-  }
-  .scanline-sweep::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, rgba(77, 136, 255, 0.8), rgba(255, 67, 54, 0.8), transparent);
-    box-shadow: 0 0 15px rgba(77, 136, 255, 0.6);
-    animation: scanline 2.4s ease-in-out infinite alternate;
-    pointer-events: none;
-    z-index: 10;
-  }
-  @keyframes scanline {
-    0% { top: 0%; opacity: 0.2; }
-    50% { opacity: 0.9; }
-    100% { top: 97%; opacity: 0.2; }
   }
 
   /* Intelligence Stage Progress Bar */

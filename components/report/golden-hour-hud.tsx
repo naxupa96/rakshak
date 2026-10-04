@@ -38,27 +38,27 @@ export function GoldenHourHud({ risk, incidentId }: GoldenHourHudProps) {
   }
 
   return (
-    <div className="my-6 p-5 rounded-2xl bg-surface-1/95 border-2 border-signal/60 shadow-[0_0_32px_rgba(255,67,54,0.18)] relative overflow-hidden backdrop-blur-xl">
+    <div className="my-6 p-6 rounded-2xl bg-[#171a20] border border-[#e5484d]/30 shadow-lg relative overflow-hidden">
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
-        {/* Urgent header & pulse */}
-        <div className="flex items-start gap-3.5">
-          <div className="p-3 rounded-xl bg-signal/15 border border-signal/40 text-signal shrink-0">
-            <svg className="w-6 h-6 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        {/* Header */}
+        <div className="flex items-start gap-4">
+          <div className="p-3 rounded-xl bg-[#e5484d]/10 border border-[#e5484d]/20 text-[#ff8b8e] shrink-0">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-signal bg-signal/10 px-2.5 py-0.5 rounded border border-signal/30">
-                🚨 CRITICAL TRIAGE: GOLDEN HOUR HUD
+              <span className="text-[11px] font-semibold text-[#ff8b8e] bg-[#e5484d]/10 px-2.5 py-0.5 rounded-full border border-[#e5484d]/20">
+                Golden Hour Protection
               </span>
-              <span className="text-[11px] font-mono text-dim">INCIDENT #{incidentId.slice(0, 8)}</span>
+              <span className="text-[11px] text-dim font-mono">Case #{incidentId.slice(0, 8)}</span>
             </div>
-            <h4 className="text-base font-semibold text-bone mt-1.5 tracking-tight">
-              Active Financial Loss Mitigation Protocol (First 60-120 Minutes)
+            <h4 className="text-base font-semibold text-bone mt-1.5 tracking-tight font-sans">
+              Already transferred funds? Immediate loss mitigation
             </h4>
-            <p className="text-xs text-mist mt-1 max-w-xl leading-relaxed">
-              NPCI inter-bank lien freezing is 94% effective within the first 2 hours of illicit UPI/IMPS debit.
+            <p className="text-xs text-mist mt-1 max-w-xl leading-relaxed font-sans">
+              NPCI inter-bank lien freezing is 94% effective within the first 60 to 120 minutes of unauthorized UPI or IMPS transactions.
             </p>
           </div>
         </div>

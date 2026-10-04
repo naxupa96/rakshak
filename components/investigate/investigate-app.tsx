@@ -12,79 +12,78 @@ import { Badge } from "@/components/ui";
 
 type Tab = "text" | "image" | "url" | "demo";
 
-const STAGES = ["normalize", "entities", "claims", "verify", "signals", "risk", "evidence", "trust", "graph"];
+const HUMAN_STAGES = [
+  "Reading the content",
+  "Understanding the claims",
+  "Checking the source & identity",
+  "Connecting the evidence",
+  "Assessing the risk",
+];
 
 function Processing({ label, sub }: { label: string; sub?: string }) {
-  const { dict } = useApp();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setIndex((i) => Math.min(i + 1, STAGES.length - 1)), 350);
+    const timer = window.setInterval(() => setIndex((i) => Math.min(i + 1, HUMAN_STAGES.length - 1)), 450);
     return () => window.clearInterval(timer);
   }, []);
 
-  const progressPct = Math.round(((index + 1) / STAGES.length) * 100);
+  const progressPct = Math.round(((index + 1) / HUMAN_STAGES.length) * 100);
 
   return (
-    <div className="mx-auto max-w-xl border border-line bg-[#080b0f] p-6 text-bone font-mono text-xs select-none" role="status" aria-live="polite">
-      {/* Top Docket Bar */}
-      <div className="flex items-center justify-between border-b border-line pb-3 mb-4 bg-[#0c0f15] -mx-6 -mt-6 p-4">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 bg-signal" />
-          <span className="font-bold tracking-wider text-bone">INTERROGATION IN PROGRESS</span>
+    <div className="mx-auto max-w-lg rounded-2xl border border-white/[0.08] bg-[#121419] p-8 text-bone shadow-[0_20px_50px_rgba(0,0,0,0.4)]" role="status" aria-live="polite">
+      <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 mb-6">
+        <div>
+          <span className="text-xs font-medium text-azure uppercase tracking-wider block">
+            Investigation in progress
+          </span>
+          <h3 className="text-base font-semibold text-bone mt-1">{label}</h3>
         </div>
-        <span className="text-[11px] font-bold text-azure border border-azure/40 bg-azure/10 px-2 py-0.5">
-          {progressPct}% COMPLETE
+        <span className="text-xs font-medium text-mist px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06]">
+          {progressPct}%
         </span>
       </div>
 
-      <div className="mb-4">
-        <p className="text-[11px] uppercase tracking-wider text-mist">{label}</p>
-        {sub ? <p className="text-[11px] text-dim mt-0.5">{sub}</p> : null}
-      </div>
-
-      {/* Stage Grid */}
-      <div className="border border-line divide-y divide-line mb-5 bg-[#0a0d12]">
-        {STAGES.map((stage, i) => {
-          const state = i < index ? "done" : i === index ? "active" : "pending";
+      {/* Human-Readable Progress List */}
+      <div className="space-y-3 mb-6">
+        {HUMAN_STAGES.map((stageName, i) => {
+          const isDone = i < index;
+          const isCurrent = i === index;
           return (
             <div
-              key={stage}
-              className={`flex items-center justify-between px-3.5 py-2 transition-colors ${
-                state === "done"
-                  ? "bg-[#0b1016] text-emerald"
-                  : state === "active"
-                  ? "bg-[#111722] text-bone font-bold"
-                  : "text-dim"
+              key={stageName}
+              className={`flex items-center justify-between px-4 py-2.5 rounded-xl border text-xs transition-all ${
+                isDone
+                  ? "border-[#35b779]/20 bg-[#35b779]/5 text-[#35b779]"
+                  : isCurrent
+                  ? "border-azure/30 bg-azure/10 text-bone font-medium"
+                  : "border-white/[0.04] bg-transparent text-dim"
               }`}
             >
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono text-[10px]">
-                  {state === "done" ? "✓" : state === "active" ? "●" : "○"}
+              <div className="flex items-center gap-3">
+                <span className="text-xs">
+                  {isDone ? "✓" : isCurrent ? "●" : "○"}
                 </span>
-                <span className="uppercase tracking-wider text-[11px]">
-                  {(dict.processing.stages as Record<string, string>)[stage] ?? stage}
-                </span>
+                <span className="text-xs">{stageName}</span>
               </div>
-              <span className="text-[10px] text-dim">
-                {state === "done" ? "EXECUTED" : state === "active" ? "PROCESSING" : "QUEUED"}
+              <span className="text-[11px] text-dim">
+                {isDone ? "Complete" : isCurrent ? "Analyzing" : "Queued"}
               </span>
             </div>
           );
         })}
       </div>
 
-      <div className="h-1 w-full bg-[#13171f] border border-line">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06]">
         <div
-          className="h-full bg-azure transition-[width] duration-200"
+          className="h-full bg-azure transition-all duration-300 rounded-full"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
-      <div className="mt-3 flex items-center justify-between text-[10px] text-dim">
-        <span>SECURITY LEVEL: AIR-GAPPED EVALUATION</span>
-        <span>NO EXTERNAL RETENTION</span>
-      </div>
+      <p className="mt-4 text-xs text-center text-dim font-normal">
+        Your inputs are processed privately in your browser session.
+      </p>
     </div>
   );
 }
@@ -199,19 +198,23 @@ export function InvestigateApp() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-5 py-10 font-mono text-xs text-bone">
-      {/* Workstation Header */}
-      <div className="border-b border-line pb-4 mb-6">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="h-1.5 w-1.5 bg-signal" />
-          <p className="kicker !text-bone">FORENSIC INTAKE WORKSTATION</p>
-        </div>
-        <h1 className="text-2xl font-bold tracking-tight text-bone font-sans">{dict.input.title}</h1>
-        <p className="mt-1 text-xs text-mist font-sans">{dict.input.subtitle}</p>
+    <div className="mx-auto w-full max-w-4xl px-5 py-12 font-sans text-bone">
+      {/* Header */}
+      <div className="mb-8">
+        <span className="text-xs font-semibold text-azure uppercase tracking-wider block mb-2">
+          New investigation
+        </span>
+        <h1 className="text-3xl font-semibold tracking-tight text-bone font-sans">
+          What would you like to verify?
+        </h1>
+        <p className="mt-2 text-sm text-mist max-w-xl font-normal leading-relaxed">
+          Paste an investment message, upload a screenshot, enter a website URL or select a sample scenario.
+        </p>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
-        <div className="flex flex-wrap gap-1" role="tablist" aria-label={dict.input.title}>
+      {/* Elegant Tab Pills */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-4">
+        <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-[#121419] border border-white/[0.06]" role="tablist" aria-label={dict.input.title}>
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -221,13 +224,13 @@ export function InvestigateApp() {
                 setTab(t.id);
                 setError(null);
               }}
-              className={`border px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 tab === t.id
-                  ? "border-bone bg-bone text-ink font-bold"
-                  : "border-line bg-[#090b0e] text-mist hover:text-bone hover:border-line-2"
+                  ? "bg-bone text-[#0b0d11] font-semibold shadow-sm"
+                  : "text-mist hover:text-bone hover:bg-white/[0.04]"
               }`}
             >
-              [ {t.label} ]
+              {t.label}
             </button>
           ))}
         </div>
@@ -255,22 +258,23 @@ export function InvestigateApp() {
               // Permission denied
             }
           }}
-          className="border border-azure/40 bg-azure/10 px-3 py-1.5 text-xs font-mono text-azure hover:bg-azure/20 hover:text-bone transition-colors"
+          className="btn btn-ghost !py-1.5 !px-3.5 !text-xs font-medium text-azure border-azure/20 hover:bg-azure/10"
           title="Reads clipboard and initiates interrogation"
         >
-          PASTE & INTERROGATE ↵
+          Paste & verify ↵
         </button>
       </div>
 
-      <div className="border border-line bg-[#080b0f] p-5 mt-4">
+      {/* Main Input Surface */}
+      <div className="rounded-2xl border border-white/[0.08] bg-[#121419] p-6 mt-6 shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
         {tab === "text" ? (
           <div>
-            <label htmlFor="paste" className="kicker !text-dim block mb-2">
+            <label htmlFor="paste" className="text-xs font-medium text-mist block mb-2">
               {dict.input.hintText}
             </label>
             <textarea
               id="paste"
-              className="field min-h-[190px] resize-y font-mono !text-xs leading-relaxed border-line bg-[#06080b]"
+              className="field min-h-[190px] resize-y font-sans text-sm leading-relaxed border-white/[0.08] bg-[#0c0e12] rounded-xl focus:border-white/20"
               placeholder={dict.input.placeholderText}
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -291,16 +295,15 @@ export function InvestigateApp() {
                 setDragging(false);
                 void handleFile(e.dataTransfer.files?.[0]);
               }}
-              className={`flex min-h-[170px] flex-col items-center justify-center gap-3 border border-dashed px-6 py-6 text-center transition-colors ${
+              className={`flex min-h-[180px] flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-8 text-center transition-all ${
                 dragging
-                  ? "border-azure bg-azure/10 text-bone"
-                  : "border-line bg-[#06080b] hover:border-line-2 text-mist"
+                  ? "border-azure bg-azure/10"
+                  : "border-white/[0.1] bg-[#0c0e12] hover:border-white/[0.2]"
               }`}
             >
-              <span className="font-mono text-xs uppercase tracking-wider text-dim">
-                DRAG IMAGE EVIDENCE HERE OR BROWSE LOCAL FILES
-              </span>
-              <p className="text-xs text-mist max-w-sm font-sans">{dragging ? dict.input.dropHere : dict.input.hintScreenshot}</p>
+              <span className="text-2xl mb-1">🖼️</span>
+              <p className="text-sm font-medium text-bone max-w-sm">{dragging ? dict.input.dropHere : dict.input.hintScreenshot}</p>
+              <p className="text-xs text-dim">PNG, JPG, or WebP up to 10MB</p>
               <input
                 ref={fileRef}
                 type="file"
@@ -309,35 +312,35 @@ export function InvestigateApp() {
                 onChange={(e) => void handleFile(e.target.files?.[0])}
               />
               <button
-                className="btn btn-ghost !py-1.5 !px-3 !text-xs font-mono uppercase"
+                className="btn btn-ghost !py-1.5 !px-4 !text-xs font-medium mt-1"
                 onClick={() => fileRef.current?.click()}
               >
-                SELECT FILE
+                Browse files
               </button>
             </div>
 
             {ocr.status === "reading" ? (
-              <div className="mt-4 p-3 border border-line bg-[#0a0d12]" role="status" aria-live="polite">
-                <div className="flex items-center justify-between text-xs text-mist font-mono mb-2">
-                  <span>OCR EXTRACTION IN PROGRESS...</span>
-                  <span>{ocr.progress}%</span>
+              <div className="mt-4 p-4 rounded-xl border border-white/[0.06] bg-[#0c0e12]" role="status" aria-live="polite">
+                <div className="flex items-center justify-between text-xs text-mist mb-2">
+                  <span>Reading text from screenshot...</span>
+                  <span className="font-semibold text-bone">{ocr.progress}%</span>
                 </div>
-                <div className="h-1 w-full bg-[#151922] border border-line">
-                  <div className="h-full bg-azure transition-[width]" style={{ width: `${ocr.progress}%` }} />
+                <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-full bg-azure transition-all rounded-full" style={{ width: `${ocr.progress}%` }} />
                 </div>
               </div>
             ) : null}
 
             {ocr.status === "done" ? (
-              <div className="mt-4">
+              <div className="mt-5">
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="kicker !text-dim">{dict.input.extractReview}</p>
-                  <span className="text-[11px] font-mono text-emerald bg-emerald/10 border border-emerald/30 px-2 py-0.5">
-                    CONFIDENCE: {ocr.confidence}%
+                  <span className="text-xs font-medium text-mist">{dict.input.extractReview}</span>
+                  <span className="text-xs text-[#35b779] bg-[#35b779]/10 border border-[#35b779]/20 px-2.5 py-0.5 rounded-full font-medium">
+                    Text extracted ({ocr.confidence}% confidence)
                   </span>
                 </div>
                 <textarea
-                  className="field min-h-[150px] resize-y font-mono !text-xs leading-relaxed border-line bg-[#06080b]"
+                  className="field min-h-[150px] resize-y text-sm leading-relaxed border-white/[0.08] bg-[#0c0e12] rounded-xl"
                   value={ocr.text}
                   onChange={(e) => setOcr((prev) => ({ ...prev, text: e.target.value }))}
                 />
@@ -348,12 +351,12 @@ export function InvestigateApp() {
 
         {tab === "url" ? (
           <div>
-            <label htmlFor="url" className="kicker !text-dim block mb-2">
+            <label htmlFor="url" className="text-xs font-medium text-mist block mb-2">
               {dict.input.hintUrl}
             </label>
             <input
               id="url"
-              className="field font-mono !text-xs border-line bg-[#06080b]"
+              className="field text-sm border-white/[0.08] bg-[#0c0e12] rounded-xl font-mono"
               placeholder={dict.input.placeholderUrl}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -363,19 +366,18 @@ export function InvestigateApp() {
 
         {tab === "demo" ? (
           <div>
-            <p className="kicker !text-dim mb-3">{dict.demo.hint}</p>
-            <div className="border border-line divide-y divide-line">
+            <span className="text-xs font-medium text-mist block mb-3">{dict.demo.hint}</span>
+            <div className="rounded-xl border border-white/[0.06] bg-[#0c0e12] divide-y divide-white/[0.04] overflow-hidden">
               {DEMO_IDS.map((id, idx) => {
                 const scenario = (dict.demo.scenarios as Record<string, { title: string; desc: string }>)[id];
                 return (
-                  <div key={id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-[#07090c] hover:bg-[#0c0f15] transition-colors">
+                  <div key={id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 hover:bg-white/[0.02] transition-colors">
                     <div>
-                      <span className="text-xs font-bold text-azure font-mono">RX-DEMO-0{idx + 1} // </span>
-                      <span className="text-xs font-sans font-semibold text-bone">{scenario?.title ?? id}</span>
-                      <p className="text-[11px] font-sans text-mist mt-0.5">{scenario?.desc}</p>
+                      <span className="text-sm font-semibold text-bone block">{scenario?.title ?? id}</span>
+                      <p className="text-xs text-mist mt-0.5">{scenario?.desc}</p>
                     </div>
                     <button
-                      className="btn btn-ghost !py-1 !px-3 !text-xs font-mono uppercase shrink-0"
+                      className="btn btn-ghost !py-1.5 !px-3.5 !text-xs font-medium shrink-0"
                       disabled={busy}
                       onClick={() => void run({ kind: "text", demo: id })}
                     >
@@ -389,15 +391,15 @@ export function InvestigateApp() {
         ) : null}
 
         {error ? (
-          <p className="mt-4 border border-signal/50 bg-signal/10 px-4 py-2.5 text-xs text-signal font-mono" role="alert">
-            ERROR: {error}
+          <p className="mt-4 rounded-xl border border-[#e5484d]/30 bg-[#e5484d]/10 px-4 py-3 text-xs text-[#ff8b8e]" role="alert">
+            {error}
           </p>
         ) : null}
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4">
-          <p className="max-w-md text-[11px] text-dim font-sans leading-relaxed">{dict.input.privacyNotice}</p>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/[0.06] pt-4">
+          <p className="max-w-md text-xs text-dim leading-relaxed">{dict.input.privacyNotice}</p>
           <button
-            className="btn btn-primary !px-6 !py-2.5 text-xs font-mono uppercase tracking-wider font-bold"
+            className="btn btn-primary !px-6 !py-2.5 text-sm font-semibold shadow-md shadow-white/5"
             disabled={
               busy ||
               (tab === "text" && !text.trim()) ||

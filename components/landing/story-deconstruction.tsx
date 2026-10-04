@@ -3,199 +3,203 @@
 import React, { useState } from "react";
 import Link from "next/link";
 
-interface StoryNode {
+interface StoryStep {
   id: string;
-  stage: "MESSAGE" | "CLAIM" | "ENTITY" | "EVIDENCE" | "RISK" | "ACTION";
+  step: string;
   title: string;
   badge: string;
   badgeColor: string;
-  content: string;
-  detail: string;
-  detectedWord?: string;
-  metric?: string;
+  quote: string;
+  explanation: string;
+  takeaway: string;
 }
 
-const STORY_LAYERS: StoryNode[] = [
+const STORY_STEPS: StoryStep[] = [
   {
-    id: "layer-1",
-    stage: "MESSAGE",
-    title: "01 · The Suspicious Inbound",
-    badge: "RAW PAYLOAD",
-    badgeColor: "text-mist border-line-2 bg-white/[0.04]",
-    content: "“Exclusive SEBI-Registered VIP Club: Invest ₹25,000 today for GUARANTEED 24% monthly returns. Limited 5 slots left! Transfer via UPI to vip-advisory@okaxis immediately.”",
-    detail: "Received on WhatsApp / Telegram. Designed to compel rapid impulsive transfer before rational verification.",
+    id: "step-1",
+    step: "01",
+    title: "A suspicious message arrives",
+    badge: "Inbound lure",
+    badgeColor: "text-mist bg-white/[0.04] border-white/[0.08]",
+    quote: "“Exclusive SEBI-Registered VIP Club: Invest ₹25,000 today for GUARANTEED 24% monthly returns. Limited 5 slots left! Transfer via UPI to vip-advisory@okaxis immediately.”",
+    explanation: "Scammers frequently target investors across WhatsApp and Telegram, combining promises of extreme profit with urgent deadlines to induce impulsive transfers.",
+    takeaway: "Notice the pairing of high guaranteed returns with high time pressure.",
   },
   {
-    id: "layer-2",
-    stage: "CLAIM",
-    title: "02 · Deconstructed Claims",
-    badge: "REGULATORY / RETURN FRAUD",
-    badgeColor: "text-amber-400 border-amber-500/30 bg-amber-500/10",
-    content: "Claim 1: “Guaranteed 24% monthly returns” (Annualized 288% ROI)\nClaim 2: “SEBI-Registered VIP Club” (Regulatory Endorsement)",
-    detail: "Under SEBI (Investment Advisers) Regulations, 2013, guaranteeing fixed stock market returns is prohibited by law.",
-    detectedWord: "GUARANTEED 24% MONTHLY",
+    id: "step-2",
+    step: "02",
+    title: "Rakshak extracts the claims",
+    badge: "Prohibited return",
+    badgeColor: "text-[#d99a32] bg-[#d99a32]/10 border-[#d99a32]/20",
+    quote: "Claim 1: “Guaranteed 24% monthly returns” (Annualized 288% ROI)\nClaim 2: “SEBI-Registered VIP Advisory”",
+    explanation: "Under SEBI (Investment Advisers) Regulations, 2013, guaranteeing fixed stock market returns is prohibited by law. Legitimate registered advisers never guarantee performance.",
+    takeaway: "A guaranteed return claim is an immediate red flag under Indian securities law.",
   },
   {
-    id: "layer-3",
-    stage: "ENTITY",
-    title: "03 · Extracted Threat Entities",
-    badge: "INTERMEDIARY & VPA",
-    badgeColor: "text-sky-400 border-sky-500/30 bg-sky-500/10",
-    content: "Entity: “VIP Club” · Claimed SEBI: INX-Unregistered\nVPA: vip-advisory@okaxis (Flagged mule account pattern)",
-    detail: "Cross-checked against SEBI 4,200+ Master Registered Intermediary records. No matching SEBI license found.",
-    metric: "0 / 1 REGULATORY MATCH",
+    id: "step-3",
+    step: "03",
+    title: "Checking the identity & registry",
+    badge: "Unregistered entity",
+    badgeColor: "text-[#6c8eff] bg-[#6c8eff]/10 border-[#6c8eff]/20",
+    quote: "Claimed entity: “VIP Advisory Club”\nSEBI Master Database lookup: No matching intermediary registration found.",
+    explanation: "Rakshak cross-references the claimed business against 4,200+ active SEBI-registered entities, checking for valid license numbers, official email domains, and registered addresses.",
+    takeaway: "No registered licence found for this entity name.",
   },
   {
-    id: "layer-4",
-    stage: "EVIDENCE",
-    title: "04 · Forensic Cross-Examination",
-    badge: "LIVE INTEL CORROBORATION",
-    badgeColor: "text-signal border-signal/40 bg-signal/10",
-    content: "• Domain registered 3 days ago via privacy proxy\n• VPA mapped to private individual P2P account, not corporate escrow\n• Acoustic and leet text evasion detected in header payload",
-    detail: "Contradiction proven: Sender claims institutional corporate status but routes payment to an individual mule wallet.",
-    metric: "3 CONTRADICTIONS PROVEN",
+    id: "step-4",
+    step: "04",
+    title: "Examining domain & payment details",
+    badge: "Mule payment channel",
+    badgeColor: "text-[#e5484d] bg-[#e5484d]/10 border-[#e5484d]/20",
+    quote: "Domain: sebi-vip-portal.in (Registered 3 days ago via privacy proxy)\nPayment: vip-advisory@okaxis (Individual savings account, not institutional escrow)",
+    explanation: "Contradiction identified: The sender claims corporate advisory status, but requests direct transfer to an individual savings account hosted on a brand new proxy domain.",
+    takeaway: "Personal UPI destination masquerading as an institutional fund.",
   },
   {
-    id: "layer-5",
-    stage: "RISK",
-    title: "05 · Explainable Risk Verdict",
-    badge: "CRITICAL RISK · 94/100",
-    badgeColor: "text-red-400 border-red-500/40 bg-red-500/20",
-    content: "Verdict: CRITICAL RISK (94 / 100)\nHigh urgency pressure + False regulatory claims + High-yield fraudulent solicitation.",
-    detail: "Every single point of the 94 score is accounted for with cryptographic and textual receipts. No black-box guesses.",
-    metric: "SCORE: 94 / 100",
+    id: "step-5",
+    step: "05",
+    title: "Understandable risk verdict",
+    badge: "High risk · 94 / 100",
+    badgeColor: "text-[#e5484d] bg-[#e5484d]/15 border-[#e5484d]/30 font-semibold",
+    quote: "Score: 94 / 100\nFactors: False regulatory claim (+31) · Prohibited return guarantee (+24) · Fresh domain (+15) · Urgency (+14) · Mule UPI (+10)",
+    explanation: "Every point is transparently attributed to concrete evidence. No black-box AI scores or hidden assumptions.",
+    takeaway: "Clear, verifiable reasons behind every score.",
   },
   {
-    id: "layer-6",
-    stage: "ACTION",
-    title: "06 · Defensive Protective Action",
-    badge: "GOLDEN HOUR SHIELD",
-    badgeColor: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
-    content: "1. Block and preserve chat export with SHA-256 integrity hash.\n2. In case of payment: Dial 1930 / USSD *99# to freeze mule bank account.\n3. Generate tamper-evident PDF dossier for cybercrime.gov.in.",
-    detail: "Transforms panic into structured legal triage within the critical 60-minute recovery window.",
+    id: "step-6",
+    step: "06",
+    title: "Clear, protective next steps",
+    badge: "Golden Hour safety",
+    badgeColor: "text-[#35b779] bg-[#35b779]/10 border-[#35b779]/20",
+    quote: "1. Block sender & preserve conversation screenshots\n2. If funds were transferred: Dial 1930 / cybercrime.gov.in within the Golden Hour\n3. Generate a formal SEBI SCORES complaint dossier",
+    explanation: "When financial loss threatens, immediate calm action preserves evidence and alerts bank nodal officers before funds leave the intermediary banking chain.",
+    takeaway: "Calm, structured steps to protect your capital.",
   },
 ];
 
 export function StoryDeconstruction() {
-  const [activeLayer, setActiveLayer] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const current = STORY_STEPS[activeStep];
 
   return (
-    <section className="relative mx-auto w-full max-w-6xl px-5 py-20 border-b border-line bg-[#07090c]">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b border-line">
+    <section className="relative mx-auto w-full max-w-6xl px-5 py-24 border-b border-white/[0.06] bg-[#0a0b0e]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 pb-6 border-b border-white/[0.06]">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 bg-signal" />
-            <p className="kicker !text-bone">FORENSIC CASE STUDY · DECONSTRUCTION</p>
-          </div>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-bone md:text-3xl font-sans">
-            How Rakshak Dissects Inbound Threats
+          <span className="text-xs font-semibold uppercase tracking-wider text-mist block">
+            Investigation walkthrough
+          </span>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-bone font-sans">
+            How Rakshak breaks down a threat
           </h2>
-          <p className="mt-1.5 max-w-xl text-xs font-mono leading-relaxed text-mist">
-            Follow the automated interrogation pipeline from suspicious inbound message to definitive mathematical risk verdict.
+          <p className="mt-2 text-sm text-mist max-w-xl font-normal leading-relaxed">
+            Follow the six stages of investigation—from inbound message to transparent risk assessment and defensive action.
           </p>
         </div>
 
-        {/* Layer tabs */}
-        <div className="flex flex-wrap items-center gap-1 border border-line bg-[#090b0e] p-1 font-mono text-xs">
-          {STORY_LAYERS.map((layer, idx) => (
+        {/* Step pill buttons */}
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#121419] border border-white/[0.06]">
+          {STORY_STEPS.map((s, idx) => (
             <button
-              key={layer.id}
-              onClick={() => setActiveLayer(idx)}
-              className={`px-3 py-1.5 text-[11px] uppercase transition-colors ${
-                activeLayer === idx
-                  ? "bg-bone text-ink font-semibold"
-                  : "text-mist hover:text-bone hover:bg-[#12161c]"
+              key={s.id}
+              onClick={() => setActiveStep(idx)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                activeStep === idx
+                  ? "bg-bone text-[#0b0d11] font-semibold shadow-sm"
+                  : "text-mist hover:text-bone hover:bg-white/[0.03]"
               }`}
             >
-              0{idx + 1} {layer.stage}
+              {s.step}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Main Interactive Stage */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr] items-stretch">
-        {/* Left Column: Interactive Story Progress Cards */}
-        <div className="space-y-2 font-mono">
-          {STORY_LAYERS.map((layer, idx) => {
-            const isActive = activeLayer === idx;
+      {/* Main Two-Column Stage */}
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr] items-stretch">
+        {/* Left Column: Interactive Story Progress List */}
+        <div className="space-y-2.5">
+          {STORY_STEPS.map((s, idx) => {
+            const isActive = activeStep === idx;
             return (
               <div
-                key={layer.id}
-                onClick={() => setActiveLayer(idx)}
-                className={`cursor-pointer border p-4 transition-colors ${
+                key={s.id}
+                onClick={() => setActiveStep(idx)}
+                className={`cursor-pointer rounded-xl p-4 border transition-all ${
                   isActive
-                    ? "bg-[#0f141b] border-azure text-bone"
-                    : "bg-[#090c10] border-line hover:border-line-2 text-mist"
+                    ? "bg-[#14171d] border-white/[0.15] shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+                    : "bg-[#111317]/50 border-white/[0.04] hover:border-white/[0.08] hover:bg-[#121419]"
                 }`}
               >
-                <div className="flex items-center justify-between gap-3 text-[10.5px]">
-                  <span className="text-dim">0{idx + 1} // {layer.stage}</span>
-                  <span className="text-azure">{layer.badge}</span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-dim font-medium">{s.step}</span>
+                  <span className={`text-[11px] px-2 py-0.5 rounded-md border ${s.badgeColor}`}>
+                    {s.badge}
+                  </span>
                 </div>
-                <h3 className={`mt-1.5 text-sm font-sans font-semibold ${isActive ? "text-bone" : "text-mist"}`}>
-                  {layer.title}
+                <h3 className={`mt-1.5 text-sm font-medium ${isActive ? "text-bone font-semibold" : "text-mist"}`}>
+                  {s.title}
                 </h3>
-                <p className="mt-1 text-[11px] text-dim font-sans leading-relaxed line-clamp-2">
-                  {layer.detail}
+                <p className="mt-1 text-xs text-dim leading-relaxed line-clamp-2">
+                  {s.takeaway}
                 </p>
               </div>
             );
           })}
         </div>
 
-        {/* Right Column: Live Deconstruction Inspector Terminal */}
-        <div className="border border-line bg-[#080b0f] p-6 flex flex-col justify-between">
+        {/* Right Column: Refined Inspection Dossier */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#121419] p-6 flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
           <div>
-            {/* Terminal Header */}
-            <div className="flex items-center justify-between border-b border-line pb-3 font-mono text-xs">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-5">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-signal" />
-                <span className="text-bone font-semibold">CASE RX-2026-0417</span>
-                <span className="text-dim">/ DECONSTRUCTION</span>
+                <span className="text-xs font-semibold text-bone">{current.title}</span>
               </div>
-              <span className="text-[11px] text-azure">
-                PHASE 0{activeLayer + 1} OF 06
+              <span className="text-xs text-dim">
+                Stage {activeStep + 1} of 6
               </span>
             </div>
 
-            {/* Active Content Inspection */}
-            <div className="mt-5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="kicker !text-dim">EXTRACTED EVIDENCE VECTOR</span>
-                {STORY_LAYERS[activeLayer].metric && (
-                  <span className="text-[11px] font-mono font-bold text-signal bg-signal/10 border border-signal/30 px-2 py-0.5">
-                    {STORY_LAYERS[activeLayer].metric}
-                  </span>
-                )}
+            {/* Extracted Artifact Quote */}
+            <div>
+              <span className="text-xs font-medium text-dim block mb-2">Extracted content</span>
+              <div className="rounded-xl border border-white/[0.06] bg-[#181b22] p-4 text-sm text-bone leading-relaxed whitespace-pre-line">
+                {current.quote}
               </div>
+            </div>
 
-              <div className="border border-line bg-[#050709] p-4 font-mono text-xs leading-relaxed text-bone whitespace-pre-line border-l-2 border-l-azure">
-                {STORY_LAYERS[activeLayer].content}
-              </div>
-
-              <div className="mt-4 p-4 border border-line bg-[#090d13]">
-                <p className="text-[10.5px] font-mono uppercase tracking-wider text-azure mb-1">
-                  Legal & Empirical Analysis
-                </p>
-                <p className="text-xs text-mist font-sans leading-relaxed">
-                  {STORY_LAYERS[activeLayer].detail}
-                </p>
-              </div>
+            {/* Human Explanation */}
+            <div className="mt-5 p-4 rounded-xl bg-[#161920] border border-white/[0.05]">
+              <span className="text-xs font-medium text-azure block mb-1">
+                Investigation analysis
+              </span>
+              <p className="text-xs text-mist leading-relaxed font-normal">
+                {current.explanation}
+              </p>
             </div>
           </div>
 
           {/* Bottom Action Footer */}
-          <div className="mt-6 pt-4 border-t border-line flex items-center justify-between font-mono text-xs">
+          <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs">
             <span className="text-dim">
-              SYSTEM STATUS: INTERROGATION ACTIVE
+              Explore how this works on live messages
             </span>
-            <Link
-              href="/investigate?demo=guaranteed_returns"
-              className="btn btn-primary !py-1.5 !px-3.5 !text-xs font-mono uppercase"
-            >
-              Examine Full Case Docket →
-            </Link>
+            <div className="flex gap-2">
+              <button
+                disabled={activeStep === 0}
+                onClick={() => setActiveStep((s) => Math.max(0, s - 1))}
+                className="btn btn-ghost !py-1 !px-3 !text-xs disabled:opacity-30"
+              >
+                Previous
+              </button>
+              <button
+                disabled={activeStep === STORY_STEPS.length - 1}
+                onClick={() => setActiveStep((s) => Math.min(STORY_STEPS.length - 1, s + 1))}
+                className="btn btn-primary !py-1 !px-3 !text-xs disabled:opacity-30"
+              >
+                Next →
+              </button>
+            </div>
           </div>
         </div>
       </div>
