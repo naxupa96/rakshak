@@ -17,7 +17,19 @@ import {
   type Tone,
 } from "@/components/ui";
 import { TrustGraphView } from "@/components/graph/trust-graph";
-import { downloadJson, saveIncident, listIncidents } from "@/lib/storage/locker";
+import { downloadJson, saveIncident, listIncidents, getPreviousScan, recordScanHash } from "@/lib/storage/locker";
+import { LiveVerificationChips } from "@/components/report/live-verification-chips";
+import { CounterfactualCard } from "@/components/report/counterfactual-card";
+import { ImpersonationDiffCard } from "@/components/report/impersonation-diff-card";
+import { AudioSafetyBriefing } from "@/components/report/audio-safety-briefing";
+import { ComplaintDossierModal } from "@/components/report/complaint-dossier-modal";
+import { PsychologicalTimelineCard } from "@/components/report/psychological-timeline-card";
+import { UrlSandboxModal } from "@/components/report/url-sandbox-modal";
+import { AdvisoryDrawer } from "@/components/report/advisory-drawer";
+import { GoldenHourHud } from "@/components/report/golden-hour-hud";
+import { ApkInspectionCard } from "@/components/report/apk-inspection-card";
+import { PdfForensicCard } from "@/components/report/pdf-forensic-card";
+import { exportReportToStix21 } from "@/lib/analyze/stix";
 
 /** Colour used for a risk tone in text and chart marks. */
 function toneColor(tone: Tone): string {
@@ -157,12 +169,40 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
   );
 
   const levelTone = LEVEL_TONE[report.risk.level];
-  const claimsByType = report.claims;
   const [highlight, setHighlight] = useState<string | null>(null);
+  const claimsByType = report.claims;
+  const [copied, setCopied] = useState(false);
+  const [dossierOpen, setDossierOpen] = useState(false);
+  const [sandboxOpen, setSandboxOpen] = useState(false);
+  const [advisoryOpen, setAdvisoryOpen] = useState(false);
+  const prevScan = useMemo(() => {
+    return report.input?.text ? getPreviousScan(report.input.text) : null;
+  }, [report.input?.text]);
 
   const onSave = () => {
     const entry = saveIncident(report);
     setSavedId(entry.id);
+  };
+
+  const onShare = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Rakshak Security Report: ${report.id}`,
+          text: `Risk Assessment: ${report.risk.score}/100 (${report.risk.level})`,
+          url,
+        });
+        return;
+      } catch {
+        /* fallback to clipboard */
+      }
+    }
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
   };
 
   const jumpTo = (sectionId: string) => {
@@ -244,8 +284,46 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
         </div>
 
         <div className="no-print flex flex-wrap items-center gap-2">
+          <AudioSafetyBriefing
+            score={report.risk.score}
+            level={report.risk.level}
+            lang={report.language}
+            suspectName={report.entities[0]?.value}
+          />
+          {report.dossier && (
+            <button
+              className="btn btn-ghost !py-2 !text-[13px] !text-sky-400 !border-sky-500/30 hover:!bg-sky-500/10"
+              onClick={() => setDossierOpen(true)}
+            >
+              📋 File 1930/SEBI Complaint
+            </button>
+          )}
+          {report.sandbox && (
+            <button
+              className="btn btn-ghost !py-2 !text-[13px] !text-red-400 !border-red-500/30 hover:!bg-red-500/10"
+              onClick={() => setSandboxOpen(true)}
+            >
+              🔬 Isolated URL Sandbox
+            </button>
+          )}
+          <button
+            className="btn btn-ghost !py-2 !text-[13px] !text-emerald-400 !border-emerald-500/30 hover:!bg-emerald-500/10"
+            onClick={() => setAdvisoryOpen(true)}
+          >
+            💬 Ask Advisor
+          </button>
+          <button className="btn btn-ghost !py-2 !text-[13px]" onClick={onShare}>
+            {copied ? dict.report.shareSuccess : dict.report.shareIncident}
+          </button>
           <button className="btn btn-ghost !py-2 !text-[13px]" onClick={() => downloadJson(report, report.id)}>
             {dict.common.exportReport}
+          </button>
+          <button
+            className="btn btn-ghost !py-2 !text-[13px] !text-cyan-400 !border-cyan-500/30 hover:!bg-cyan-500/10"
+            onClick={() => downloadJson(exportReportToStix21(report), `stix-${report.id}.json`)}
+            title="Export STIX 2.1 Standard Threat Intelligence Bundle"
+          >
+            🛡 STIX 2.1
           </button>
           <button className="btn btn-ghost !py-2 !text-[13px]" onClick={() => window.print()}>
             PDF
@@ -282,9 +360,22 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
             >
               {dict.risk.levels[report.risk.level].label}
             </p>
-            <p className="num mt-1 text-lg font-semibold text-bone">
-              {report.risk.score} <span className="text-dim">/ 100</span>
-            </p>
+            <div className="mt-1 flex items-center gap-3">
+              <p className="num text-lg font-semibold text-bone">
+                {report.risk.score} <span className="text-dim">/ 100</span>
+              </p>
+              {prevScan && (
+                <span className={`inline-flex items-center rounded-md px-2 py-0.5 font-mono text-xs font-semibold ${
+                  report.risk.score > prevScan.score
+                    ? "bg-coral/15 text-coral"
+                    : report.risk.score < prevScan.score
+                    ? "bg-leaf/15 text-leaf"
+                    : "bg-charcoal text-dim"
+                }`}>
+                  {report.risk.score > prevScan.score ? `▲ +${report.risk.score - prevScan.score}` : report.risk.score < prevScan.score ? `▼ ${report.risk.score - prevScan.score}` : "±0"} vs prev scan
+                </span>
+              )}
+            </div>
             <p className="mt-1.5 text-sm leading-relaxed text-mist">
               {dict.risk.levels[report.risk.level].line}
             </p>
@@ -312,6 +403,29 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
         </div>
       </div>
 
+      {/* Emergency Golden Hour Hotline HUD */}
+      <GoldenHourHud risk={report.risk} incidentId={report.id} />
+
+      {/* Real Live Verification Panel */}
+      <div className="mt-6">
+        <LiveVerificationChips live={report.live} />
+      </div>
+
+      {/* Side-by-Side Impersonation & Registry Discrepancy Card */}
+      {report.comparison && (
+        <ImpersonationDiffCard comparison={report.comparison} />
+      )}
+
+      {/* Android APK & Trojan Inspector Card */}
+      {report.apk && report.apk.isApk && (
+        <ApkInspectionCard apk={report.apk} />
+      )}
+
+      {/* PDF Regulatory Certificate & Digital Signature Forensics */}
+      {report.pdfForensics && report.pdfForensics.isPdf && (
+        <PdfForensicCard pdf={report.pdfForensics} />
+      )}
+
       {report.insufficientEvidence ? (
         <div className="mt-4 rounded-2xl border border-amber/45 bg-amber/8 px-5 py-4" role="status">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber">
@@ -332,6 +446,57 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
           <Section title={dict.report.why} hint={dict.report.whyHint} id="section-why" className={flash("section-why")}>
             <WhyList report={report} />
           </Section>
+
+          {/* QR Code Extraction Card */}
+          {report.qr && report.qr.hasQr && (
+            <div className="panel mt-6 p-4 border border-sky-500/30 bg-sky-950/15">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sky-400 font-bold">📷</span>
+                  <span className="text-sm font-semibold text-bone">
+                    Extracted QR Code Payload ({report.qr.payloadType?.toUpperCase()})
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono text-sky-300 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
+                  Target: {report.qr.decodedTarget}
+                </span>
+              </div>
+              {report.qr.riskNotice && (
+                <p className="mt-2 text-xs text-sky-200/90 leading-relaxed font-mono">
+                  {report.qr.riskNotice}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Bank IFSC & Mule Account Notice */}
+          {report.ifsc && (
+            <div className="panel mt-6 p-4 border border-amber-500/30 bg-amber-950/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-400 font-bold">🏦</span>
+                  <span className="text-sm font-semibold text-bone">
+                    Bank Account Decoded: {report.ifsc.bankName} ({report.ifsc.code})
+                  </span>
+                </div>
+                {report.ifsc.isKnownMuleZone && (
+                  <span className="text-[11px] font-semibold text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
+                    High-Risk Mule Zone
+                  </span>
+                )}
+              </div>
+              {report.ifsc.riskNotice && (
+                <p className="mt-2 text-xs text-amber-300/90 leading-relaxed font-mono">
+                  {report.ifsc.riskNotice}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Scam Attack Chain & Cognitive Vulnerability Timeline */}
+          {report.psychology && report.psychology.length > 0 && (
+            <PsychologicalTimelineCard timeline={report.psychology} />
+          )}
 
           {/* Score breakdown — every point traced to the engine. */}
           <details className="panel mt-10 overflow-hidden" open>
@@ -583,7 +748,9 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
           {simple ? null : actionsSection}
         </div>
 
-        <aside className="lg:sticky lg:top-24 lg:h-fit">
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
+          <CounterfactualCard report={report} />
+
           <div className="panel p-5">
             <div>
               <div className="mb-2 flex items-baseline justify-between">
@@ -639,6 +806,29 @@ export function ReportView({ report, incident }: { report: AnalysisReport; incid
           </div>
         </aside>
       </div>
+
+      {report.dossier && (
+        <ComplaintDossierModal
+          dossier={report.dossier}
+          lang={report.language}
+          isOpen={dossierOpen}
+          onClose={() => setDossierOpen(false)}
+        />
+      )}
+
+      {report.sandbox && (
+        <UrlSandboxModal
+          sandbox={report.sandbox}
+          isOpen={sandboxOpen}
+          onClose={() => setSandboxOpen(false)}
+        />
+      )}
+
+      <AdvisoryDrawer
+        report={report}
+        isOpen={advisoryOpen}
+        onClose={() => setAdvisoryOpen(false)}
+      />
     </div>
   );
 }

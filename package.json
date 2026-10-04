@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "npx tsx tests/unit-runner.ts",
+    "test:unit": "npx tsx tests/unit-runner.ts",
     "test:api": "node tests/api-smoke.mjs",
     "test:ui": "node tests/ui-smoke.mjs"
   },

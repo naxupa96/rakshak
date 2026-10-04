@@ -143,6 +143,7 @@ export interface EvidenceInput {
   hasSignals: boolean;
   charCount: number;
   context: "solicitation" | "educational" | "news" | "complaint" | "neutral";
+  live?: import("@/types/intel").LiveVerificationReport;
 }
 
 export function buildEvidence(input: EvidenceInput): EvidenceItem[] {
@@ -272,22 +273,39 @@ export function buildEvidence(input: EvidenceInput): EvidenceItem[] {
     out.push(ev("—", "noSignals", "confirmed", "moderate"));
   }
 
-  out.push(ev("—", "externalUnavailable", "unverifiable", "weak"));
+  // Live intel items:
+  if (input.live) {
+    for (const src of input.live.sources) {
+      if (src.source === "openphish" && src.status === "hit") {
+        out.push(ev("OpenPhish", "openphishHit", "contradicted", "strong", { params: { value: src.summary } }));
+      } else if (src.source === "openphish" && src.status === "clean") {
+        out.push(ev("OpenPhish", "openphishClean", "confirmed", "weak", { params: { value: src.summary } }));
+      } else if (src.source === "rdap" && src.status === "hit") {
+        out.push(ev("RDAP", "rdapNewDomain", "contradicted", "strong", { params: { value: src.summary } }));
+      } else if (src.source === "rdap" && src.status === "clean") {
+        out.push(ev("RDAP", "rdapEstablished", "confirmed", "moderate", { params: { value: src.summary } }));
+      } else if (src.source === "wayback" && src.status === "clean") {
+        out.push(ev("Wayback", "waybackHistory", "confirmed", "moderate", { params: { value: src.summary } }));
+      }
+    }
+  } else {
+    out.push(ev("—", "externalUnavailable", "unverifiable", "weak"));
+  }
 
   return out;
 }
 
 /**
- * Offline verification state for each claim. Nothing here proves a claim
- * true — at best it contradicts the form of a claim, or leaves it open.
+ * Verification state for each claim, incorporating live intelligence.
  */
 export function applyClaimVerification(
   claims: { type: string; verification: VerificationStatus }[],
   registration: RegistrationCheck,
   domains: { official: string[]; suspicious: DomainFinding[]; mismatched: DomainFinding[] },
+  live?: import("@/types/intel").LiveVerificationReport,
 ): void {
   const externallyCheckable = ["REGULATORY_APPROVAL", "GOVERNMENT_AFFILIATION", "CELEBRITY_ENDORSEMENT"];
-  const badDomain = domains.suspicious.length > 0 || domains.mismatched.length > 0;
+  const badDomain = domains.suspicious.length > 0 || domains.mismatched.length > 0 || Boolean(live?.hasBlocklistHit);
 
   for (const c of claims) {
     if (!externallyCheckable.includes(c.type)) {
@@ -299,7 +317,11 @@ export function applyClaimVerification(
         c.verification = "contradicted";
         continue;
       }
-      c.verification = domains.official.length ? "requires_verification" : "requires_verification";
+      if (domains.official.length > 0 && registration?.status === "format_valid") {
+        c.verification = "verified";
+        continue;
+      }
+      c.verification = "requires_verification";
       continue;
     }
     c.verification = badDomain ? "contradicted" : "requires_verification";

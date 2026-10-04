@@ -321,10 +321,15 @@ details[open] > summary .chev {
   th {
     color: #111 !important;
   }
+  b,
+  strong {
+    color: #000 !important;
+    font-weight: 700 !important;
+  }
   .text-mist,
   .text-dim,
   .kicker {
-    color: #4b5563 !important;
+    color: #374151 !important;
   }
   .panel,
   .panel-flat,
@@ -332,6 +337,14 @@ details[open] > summary .chev {
     background: #fff !important;
     border-color: #d5dae1 !important;
     box-shadow: none !important;
+  }
+  /* Fix amber banners in print */
+  [role="status"],
+  .bg-amber\/8,
+  .border-amber\/45 {
+    background: #fffbeb !important;
+    border-color: #f59e0b !important;
+    color: #92400e !important;
   }
   .chip,
   .btn,

@@ -60,16 +60,20 @@ export function assessRisk(args: {
   source: SourceInput;
   hasAmount: boolean;
   insufficientEvidence: boolean;
+  live?: import("@/types/intel").LiveVerificationReport;
 }): RiskAssessment {
-  const { signals, context, evidence, source, hasAmount } = args;
+  const { signals, context, evidence, source, hasAmount, live } = args;
 
   const deceptivePoints = clamp(
     Math.round(signals.reduce((sum, s) => sum + s.weight * (0.7 + 0.3 * s.confidence), 0)),
   );
 
+  const hasPaymentSignal = signals.some((s) => s.id === "payment_link" || s.id === "upfront_payment");
+  const hasCredentialAsk = signals.some((s) => s.id === "otp_request" || s.id === "credential_request" || s.id === "apk_request");
+
   const solicitationPoints = clamp(
-    context === "solicitation"
-      ? 70 + (hasAmount ? 20 : 0) + (signals.some((s) => s.id === "otp_request" || s.id === "credential_request") ? 10 : 0)
+    context === "solicitation" || hasPaymentSignal || hasCredentialAsk
+      ? 70 + (hasAmount ? 20 : 0) + (hasCredentialAsk ? 10 : 0)
       : context === "complaint"
         ? 45
         : context === "neutral"
@@ -82,7 +86,12 @@ export function assessRisk(args: {
   const unresolved = evidence.filter(
     (e) => e.status === "requires_verification" || e.status === "unverifiable",
   ).length;
-  const verificationPoints = clamp(Math.round(100 * ((0.6 * contradicted + 0.4 * unresolved) / total)));
+  let verificationPoints = clamp(Math.round(100 * ((0.6 * contradicted + 0.4 * unresolved) / total)));
+
+  // If live intel confirms domain registered < 7 days and there is solicitation/payment ask, boost verification gap
+  if (live?.isNewlyRegistered && (context === "solicitation" || hasAmount || hasPaymentSignal)) {
+    verificationPoints = clamp(Math.max(verificationPoints, 85));
+  }
 
   let credibility = 40;
   if (source.totalDomains === 0) credibility = context === "solicitation" ? 35 : 55;
@@ -90,6 +99,12 @@ export function assessRisk(args: {
   else if (source.officialDomains > 0) credibility = 92;
   else if (source.fineDomains > 0) credibility = 68;
   else if (source.unknownDomains > 0) credibility = 42;
+
+  // Blocklist hit strongly reduces source credibility to near zero
+  if (live?.hasBlocklistHit) {
+    credibility = Math.min(credibility, 3);
+  }
+
   const sourcePoints = clamp(100 - credibility);
 
   const pressurePoints = clamp(
@@ -114,14 +129,27 @@ export function assessRisk(args: {
   }));
 
   const raw = factors.reduce((sum, f) => sum + f.contribution, 0);
-  const contextMultiplier = CONTEXT_MULTIPLIER[context];
+
+  // Context-bypass fix: apply educational/news discount ONLY if no solicitation, payment, or credential signal fired
+  const isSolicitingOrPaying = context === "solicitation" || hasAmount || hasPaymentSignal || hasCredentialAsk;
+  const contextMultiplier = isSolicitingOrPaying ? 1 : CONTEXT_MULTIPLIER[context];
   let score = Math.round(raw * contextMultiplier);
 
-  // Ambiguous input must not be presented as an accusation.
-  if (args.insufficientEvidence) score = Math.min(score, 35);
+  // If live blocklist hit confirmed, minimum score is HIGH (80+)
+  if (live?.hasBlocklistHit) {
+    score = Math.max(score, 88);
+  }
+
+  // Coercive digital arrest or fraudulent pump-and-dump always triggers critical threshold
+  if (signals.some((s) => s.id === "coercive_arrest" || s.id === "pump_and_dump")) {
+    score = Math.max(score, 86);
+  }
+
+  // Ambiguous input must not be presented as an accusation unless confirmed blocklist hit
+  if (args.insufficientEvidence && !live?.hasBlocklistHit) score = Math.min(score, 35);
 
   return {
-    score,
+    score: clamp(score),
     level: levelFor(score),
     factors,
     contextMultiplier,

@@ -26,6 +26,28 @@ export const metadata: Metadata = {
     "Rakshak analyzes suspicious investment messages, websites and financial claims, then explains the risk with evidence — DETECT, VERIFY, EXPLAIN, PROTECT.",
   applicationName: "Rakshak",
   keywords: ["investor safety", "fraud detection", "SEBI", "financial threat intelligence", "India"],
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
+  openGraph: {
+    title: "Rakshak — Verify Before You Trust",
+    description: "Real-time threat intelligence and fraud prevention for retail investors.",
+    type: "website",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rakshak — AI Financial Threat Intelligence",
+    description: "Verify before you trust. Real-time threat detection for Indian retail investors.",
+  },
+};
+
+export const viewport = {
+  themeColor: "#0d0f12",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -76,11 +76,44 @@ export function clearIncidents(): void {
   }
 }
 
+const SCAN_HASH_KEY = "rakshak.scanhash.v1";
+
+export function getPreviousScan(text: string): { score: number; date: string } | null {
+  if (!canStore()) return null;
+  try {
+    const raw = window.localStorage.getItem(SCAN_HASH_KEY);
+    if (!raw) return null;
+    const map = JSON.parse(raw);
+    const key = text.trim().slice(0, 120);
+    return map[key] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function recordScanHash(text: string, score: number): void {
+  if (!canStore()) return;
+  try {
+    const raw = window.localStorage.getItem(SCAN_HASH_KEY);
+    const map = raw ? JSON.parse(raw) : {};
+    const key = text.trim().slice(0, 120);
+    map[key] = { score, date: new Date().toISOString() };
+    window.localStorage.setItem(SCAN_HASH_KEY, JSON.stringify(map));
+  } catch {
+    /* ignore */
+  }
+}
+
 /** Keeps only the most recent report in session memory for the report route. */
 export function saveLiveReport(report: AnalysisReport): void {
   if (typeof window === "undefined") return;
   try {
     window.sessionStorage.setItem(LIVE_KEY, JSON.stringify(report));
+    // Also save incident entry so permalinks like /report/[id] and /incident/[id] always resolve
+    saveIncident(report);
+    if (report.input?.text) {
+      recordScanHash(report.input.text, report.risk.score);
+    }
   } catch {
     /* ignore */
   }

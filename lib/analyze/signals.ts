@@ -1,5 +1,5 @@
 import type { ContentContext, Entity, Severity, Claim, Signal, SignalId, NormalizedContent } from "@/types";
-import { findMatches, quoteAround, REGULATOR_TOKENS } from "./normalize";
+import { findMatches, quoteAround, REGULATOR_TOKENS, foldLeet } from "./normalize";
 
 interface SignalPattern {
   id: SignalId;
@@ -168,6 +168,28 @@ const TEXT_SIGNALS: SignalPattern[] = [
       /તમારા\s*પરિવારનું\s*ભવિષ્ય|બાળકોનું\s*ભવિષ્ય|તક\s*હાથમાંથી\s*જવા\s*દો|તમારા\s*સ્વજનોની\s*સુરક્ષા/g,
     ],
   },
+  {
+    id: "pump_and_dump",
+    severity: "critical",
+    weight: SEVERITY_WEIGHT.critical,
+    confidence: 0.93,
+    patterns: [
+      /\b(?:upper\s*circuit|jackpot\s*(?:call|share|stock)|sure-shot\s*tip|target\s*[:=]\s*\d+%\s*in\s*\d+\s*(?:days|hours)|buy\s+before\s+9:15\s*am|dabba\s*trading|fake\s*institutional\s*account)\b/gi,
+      /(?:अपर\s*सर्किट|जैकपॉट\s*शेयर|श्योर\s*शॉट\s*टिप|डब्बा\s*ट्रेडिंग|संस्थागत\s*खाता)/g,
+      /(?:અપર\s*સર્કિટ|જેકપોટ\s*શેર|ખાતરીપૂર્વક\s*ટીપ|ડબ્બા\s*ટ્રેડિંગ)/g,
+    ],
+  },
+  {
+    id: "coercive_arrest",
+    severity: "critical",
+    weight: SEVERITY_WEIGHT.critical,
+    confidence: 0.96,
+    patterns: [
+      /\b(?:digital\s*arrest|cbi\s*(?:warrant|arrest|order)|trai\s*(?:sim\s*block|disconnection)|supreme\s*court\s*summons|narcotics\s*control\s*bureau|rbi\s*verification\s*account|stay\s*on\s*skype|stay\s*on\s*video\s*call)\b/gi,
+      /(?:डिजिटल\s*अरेस्ट|सीबीआई\s*वारंट|सुप्रीम\s*कोर्ट\s*समन|आरबीआई\s*वेरिफिकेशन\s*अकाउंट|वीडियो\s*कॉल\s*पर\s*रहें)/g,
+      /(?:ડિજિટલ\s*ધરપકડ|સીબીઆઈ\s*વોરંટ|વીડિયો\s*કૉલ\s*પર\s*રહો)/g,
+    ],
+  },
 ];
 
 /** Signals that need the extracted entities, claims and verification results. */
@@ -192,10 +214,20 @@ function build(pattern: SignalPattern, text: string, matches: { match: string; i
 
 export function detectTextSignals(text: string, context: ContentContext): Signal[] {
   const out: Signal[] = [];
+  const leetText = foldLeet(text.toLowerCase());
   for (const pattern of TEXT_SIGNALS) {
     const matches: { match: string; index: number }[] = [];
     for (const re of pattern.patterns) {
       matches.push(...findMatches(text, re));
+      if (matches.length < 6) {
+        // Also match against leet-folded representation
+        const leetMatches = findMatches(leetText, re);
+        for (const lm of leetMatches) {
+          if (!matches.some((m) => Math.abs(m.index - lm.index) <= 2)) {
+            matches.push({ match: text.slice(lm.index, lm.index + lm.match.length) || lm.match, index: lm.index });
+          }
+        }
+      }
       if (matches.length >= 6) break;
     }
     if (!matches.length) continue;
@@ -290,24 +322,55 @@ export function deriveSignals(ctx: DeriveContext): Signal[] {
     break;
   }
 
-  const mentionsSocial = /\b(?:telegram|whatsapp|whats app|instagram|facebook|snapchat|imo)\b/i.test(ctx.text);
-  if (context === "solicitation" && !normalized.domains.length && !normalized.emails.length && mentionsSocial) {
+  // payment_link signal
+  const paymentEntities = entities.filter((e) => e.type === "payment");
+  if (paymentEntities.length > 0 || /upi:\/\/|phonepe:\/\/|gpay:\/\//i.test(ctx.text)) {
+    out.push({
+      id: "payment_link",
+      severity: "high",
+      weight: SEVERITY_WEIGHT.high,
+      confidence: 0.92,
+      evidence: paymentEntities.length ? paymentEntities.slice(0, 3).map((e) => e.quote) : ["Direct payment intent link"],
+    });
+  }
+
+  const hasSocialHandle = entities.some((e) => e.type === "handle") || /t\.me\/|wa\.me\/|chat\.whatsapp\.com/i.test(ctx.text);
+  const mentionsSocial = /\b(?:telegram|whatsapp|whats app|instagram|facebook|snapchat|imo)\b/i.test(ctx.text) || hasSocialHandle;
+  const nonSocialDomains = normalized.domains.filter((d) => !/^(?:t\.me|wa\.me|whatsapp\.com|telegram\.org|instagram\.com|facebook\.com)$/i.test(d));
+  if (context === "solicitation" && !nonSocialDomains.length && !normalized.emails.length && mentionsSocial) {
     out.push({
       id: "social_only",
       severity: "low",
       weight: SEVERITY_WEIGHT.low,
-      confidence: 0.7,
-      evidence: (ctx.text.match(/telegram|whatsapp|whats app|instagram|facebook/gi) ?? []).slice(0, 2),
+      confidence: 0.75,
+      evidence: (ctx.text.match(/(?:telegram|whatsapp|whats app|instagram|facebook|t\.me\/[a-zA-Z0-9_]+|wa\.me\/\d+|@[a-zA-Z0-9_]+)/gi) ?? []).slice(0, 2),
     });
   }
 
-  if (claims.length > 0 && context !== "educational" && claims.every((c) => c.verification !== "verified")) {
+  // Mule VPA detection (personal VPA handles soliciting commercial investments/fees)
+  const muleVpas = entities
+    .filter((e) => e.type === "payment" || e.quote.includes("@"))
+    .map((e) => e.quote)
+    .filter((v) => /@(?:ok|ybl|ibl|paytm|apl|axl|upi|postbank)/i.test(v));
+  if (context === "solicitation" && muleVpas.length > 0) {
     out.push({
-      id: "unverifiable_claims",
-      severity: "medium",
-      weight: SEVERITY_WEIGHT.medium,
-      confidence: 0.79,
-      evidence: claims.slice(0, 3).map((c) => c.quote),
+      id: "mule_vpa",
+      severity: "high",
+      weight: SEVERITY_WEIGHT.high,
+      confidence: 0.89,
+      evidence: muleVpas.slice(0, 2),
+    });
+  }
+
+  // Intermediary mismatch / unregistered broker signal
+  const hasRegistration = entities.some((e) => e.type === "registration_no");
+  if (context === "solicitation" && (hasRegulator || regulatorUsedAsEndorsement) && !hasRegistration) {
+    out.push({
+      id: "suspicious_intermediary",
+      severity: "critical",
+      weight: SEVERITY_WEIGHT.critical,
+      confidence: 0.91,
+      evidence: [quoteAround(ctx.text, 0, Math.min(ctx.text.length, 60))],
     });
   }
 

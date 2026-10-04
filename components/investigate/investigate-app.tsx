@@ -74,10 +74,22 @@ export function InvestigateApp() {
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   useAfterMount(() => {
-    const demo = new URLSearchParams(window.location.search).get("demo");
+    const params = new URLSearchParams(window.location.search);
+    const demo = params.get("demo");
+    const sharedText = params.get("text") || params.get("title");
+    const sharedUrl = params.get("url");
+
     if (demo && DEMO_IDS.includes(demo)) {
       setTab("demo");
       void run({ kind: "text", demo });
+    } else if (sharedUrl) {
+      setTab("url");
+      setUrl(sharedUrl);
+      void run({ kind: "url", url: sharedUrl });
+    } else if (sharedText) {
+      setTab("text");
+      setText(sharedText);
+      void run({ kind: "text", text: sharedText });
     }
   });
 
@@ -158,25 +170,57 @@ export function InvestigateApp() {
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-bone">{dict.input.title}</h1>
       <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-mist">{dict.input.subtitle}</p>
 
-      <div className="mt-7 flex flex-wrap gap-2" role="tablist" aria-label={dict.input.title}>
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={tab === t.id}
-            onClick={() => {
-              setTab(t.id);
-              setError(null);
-            }}
-            className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-colors ${
-              tab === t.id
-                ? "border-line-2 bg-panel-2 text-bone"
-                : "border-line text-mist hover:border-line-2 hover:text-bone"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-2" role="tablist" aria-label={dict.input.title}>
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              role="tab"
+              aria-selected={tab === t.id}
+              onClick={() => {
+                setTab(t.id);
+                setError(null);
+              }}
+              className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-colors ${
+                tab === t.id
+                  ? "border-line-2 bg-panel-2 text-bone"
+                  : "border-line text-mist hover:border-line-2 hover:text-bone"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 1-Click Smart Clipboard Auto-Detect Button */}
+        <button
+          onClick={async () => {
+            try {
+              if (navigator.clipboard) {
+                const clip = await navigator.clipboard.readText();
+                if (clip && clip.trim()) {
+                  const trimmed = clip.trim();
+                  if (/^https?:\/\//i.test(trimmed)) {
+                    setTab("url");
+                    setUrl(trimmed);
+                    void run({ kind: "url", url: trimmed });
+                  } else {
+                    setTab("text");
+                    setText(trimmed);
+                    void run({ kind: "text", text: trimmed });
+                  }
+                }
+              }
+            } catch {
+              // Permission denied or clipboard empty
+            }
+          }}
+          className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 px-3.5 py-1.5 text-xs font-semibold text-sky-400 hover:bg-sky-500/20 transition-all shadow-sm"
+          title="Reads clipboard, auto-classifies URL vs text, and runs scan in 1 click"
+        >
+          <span>📋</span>
+          <span>Paste & Quick Scan</span>
+        </button>
       </div>
 
       <div className="panel mt-5 p-5">

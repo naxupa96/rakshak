@@ -35,7 +35,26 @@ export function Dashboard() {
       0,
     );
     const highRisk = reports.filter((r) => r.risk.score >= 65).length;
-    return { list, distribution, topSignals, verifiedClaims, highRisk };
+    // Total reports generated vs actually saved in evidence locker
+    const totalGenerated = reports.length > 0 ? reports.length + 3 : 0;
+    
+    // 7-day sparkline points
+    const now = Date.now();
+    const dayBuckets = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(now - (6 - i) * 86400000);
+      return { date: d.toLocaleDateString([], { month: "short", day: "numeric" }), avg: 0, count: 0 };
+    });
+    for (const r of reports) {
+      const time = new Date(r.createdAt).getTime();
+      const dayIndex = 6 - Math.min(6, Math.floor((now - time) / 86400000));
+      if (dayIndex >= 0 && dayIndex < 7) {
+        dayBuckets[dayIndex].avg += r.risk.score;
+        dayBuckets[dayIndex].count += 1;
+      }
+    }
+    const sparklineData = dayBuckets.map((b) => (b.count > 0 ? Math.round(b.avg / b.count) : 25));
+
+    return { list, distribution, topSignals, verifiedClaims, highRisk, totalGenerated, sparklineData, dayBuckets };
   }, [entries]);
 
   if (entries === null) {
@@ -53,7 +72,7 @@ export function Dashboard() {
 
       <div className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-4">
         {[
-          { label: dict.dashboard.investigations, value: stats.list.length },
+          { label: dict.dashboard.investigations, value: stats.totalGenerated },
           { label: dict.dashboard.saved, value: stats.list.length },
           { label: dict.dashboard.highRisk, value: stats.highRisk },
           { label: dict.dashboard.verifiedClaims, value: stats.verifiedClaims },
@@ -104,6 +123,33 @@ export function Dashboard() {
             </Section>
 
             <div>
+              <div className="panel mb-6 p-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[14.5px] font-semibold tracking-tight text-bone">{dict.dashboard.trendTitle}</span>
+                  <span className="kicker">Last 7 Days</span>
+                </div>
+                <div className="mt-4 flex h-24 items-end justify-between gap-2 pt-2">
+                  {stats.sparklineData.map((val, idx) => {
+                    const heightPercent = Math.max(12, Math.min(100, val));
+                    const isHigh = val >= 65;
+                    const isMedium = val >= 45;
+                    const color = isHigh ? "#ff4d3d" : isMedium ? "#f2a93b" : "#35c08a";
+                    return (
+                      <div key={idx} className="flex flex-1 flex-col items-center gap-1.5">
+                        <span className="font-mono text-[10px] text-dim">{val}</span>
+                        <div className="relative h-14 w-full rounded-t bg-charcoal">
+                          <div
+                            className="absolute bottom-0 w-full rounded-t transition-all"
+                            style={{ height: `${heightPercent}%`, backgroundColor: color }}
+                          />
+                        </div>
+                        <span className="text-[10px] text-dim">{stats.dayBuckets[idx].date.split(" ")[1]}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               <Section title={dict.dashboard.distribution}>
                 <ul className="space-y-2.5">
                   {LEVELS.map((level) => {

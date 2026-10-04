@@ -47,6 +47,21 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     } catch {
       /* ignore */
     }
+
+    // Global keyboard listener: press "/" to jump/focus investigation
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "/" && !["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) {
+        e.preventDefault();
+        const inputEl = document.querySelector<HTMLTextAreaElement | HTMLInputElement>('textarea, input[type="text"], input[type="url"]');
+        if (inputEl) {
+          inputEl.focus();
+        } else {
+          window.location.href = "/investigate";
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [lang, simple, ready]);
 
   const setLang = useCallback((l: Lang) => setLangState(l), []);

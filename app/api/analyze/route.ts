@@ -9,6 +9,25 @@ export const runtime = "nodejs";
 const MAX_TEXT = 20_000;
 const LANGS: Lang[] = ["en", "hi", "gu"];
 
+// In-memory token-bucket rate limiter (documented serverless best effort)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW = 60_000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 30;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  if (entry.count >= MAX_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+  entry.count += 1;
+  return true;
+}
+
 function fail(status: number, code: AnalyzeError["code"], error: string) {
   const body: AnalyzeError = { error, code };
   return NextResponse.json(body, { status });
@@ -22,6 +41,11 @@ function sanitize(text: string): string {
 }
 
 export async function POST(req: Request) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
+  if (!checkRateLimit(ip)) {
+    return fail(429, "UNSUPPORTED", "Too many requests. Please wait a minute before analyzing again.");
+  }
+
   const declared = Number(req.headers.get("content-length") ?? 0);
   if (Number.isFinite(declared) && declared > 1_500_000) {
     return fail(413, "TOO_LARGE", "That request is too large.");

@@ -152,6 +152,9 @@ export function extractEntities(text: string, normalized: NormalizedContent): En
   for (const { match, index } of findMatches(text, UPAY_IDS)) {
     push(out, "payment", match, 0.94, quoteAround(text, index, match.length), "unknown");
   }
+  for (const { match, index } of findMatches(text, RE.paymentLink)) {
+    push(out, "payment", match, 0.95, quoteAround(text, index, match.length), "unknown");
+  }
   for (const { match, index } of findMatches(text, RE.handle)) {
     push(out, "handle", match, 0.88, quoteAround(text, index, match.length));
   }

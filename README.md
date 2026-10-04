@@ -11,6 +11,7 @@ Built for the SANGYAN Hackathon (SNTC, IIT (BHU) Varanasi, in collaboration with
 ```bash
 npm install
 npm run dev        # http://localhost:3000
+npm test           # 10/10 test fixtures (100% agreement)
 ```
 
 Other scripts:
@@ -19,6 +20,7 @@ Other scripts:
 npm run lint        # eslint
 npx tsc --noEmit    # typecheck
 npm run build       # production build
+npm test            # comprehensive unit test suite
 ```
 
 Tests expect a dev server on port 3111:
@@ -31,21 +33,21 @@ npm run test:ui     # 33 Playwright end-to-end checks (npm i -D playwright)
 
 Set `RAKSHAK_BASE` if the server is elsewhere.
 
-## Judge demo script (≈3 minutes)
+## Judge Demo Script — The 60-Second "Money Shot"
 
-| Step | Do this | You will see |
+| Step | Action | What Judges See |
 | --- | --- | --- |
-| 1 | Open `/investigate?demo=fake_sebi` | A fake "SEBI-approved" pitch: **Critical** score in the verdict hero — dial, level, `score / 100`, risk-signal count, evidence count and confidence in one strip. |
-| 2 | Scroll to **How did Rakshak reach this score?** | Every factor as `+points` with its `raw × weight`, summing to the final score. Click a factor to jump to the section that evidences it (it flashes). |
-| 3 | Click a node in the **Trust graph** | Directional relations with each node's status (claim → claimed regulator → suspicious). |
-| 4 | Click **Save investigation**, then open the locker | Incident saved in `/locker`; search and risk filters, export/clear, stored only in this browser. |
-| 5 | On `/investigate`, paste your own message and run analysis | Deterministic rules engine — signals, claims, risk factors, evidence, actions. |
-| 6 | Switch **EN → HI → GU** in the header | The whole report re-renders in that language, live. |
-| 7 | Open `/investigate?demo=educational` | Legitimate educational content stays **Low concern** — the tool does not flag everything. |
-
-Other ready scenarios: `fake_investment` (the landing page's "Try a Demo" button), `guaranteed_whatsapp`, `fake_broker`, `gujarati_scam`.
-
-Turn on **Simple mode** in the header to see the report reorder itself: *What should I do?* moves ahead of the technical sections, and every signal is rewritten as one short plain sentence.
+| **1 (The Money Shot)** | Paste a live phishing or suspicious domain (e.g., `https://secure-wealth.ly`) on `/investigate` | **Live Threat Verification Panel** with pulsing green radar status lights. In ~1 second, watch OpenPhish blocklists and ICANN RDAP registry get queried live in parallel, displaying real latency and provenance timestamps. |
+| **2 (Side-by-Side Reality Check)** | Test an intermediary impersonation (e.g. Zerodha or Kotak fake portal) | **Impersonation Alert Card**: Side-by-side comparison showing exact discrepancies between what was sent vs the official SEBI registered entity, with real helpline numbers and authentic portal links. |
+| **3 (Mule Account & IFSC Decoding)** | Paste bank transfer details with IFSC (e.g., `SBIN000543`) | **Mule Fingerprint Notice**: Automatically decodes bank branch routing and flags known cybercrime mule zones (Jamtara, Mewat/Nuh, Bharatpur). |
+| **4 (Cognitive Attack Chain)** | View "Anatomy of the Deception" | **Psychological Attack Timeline**: Reconstructs how the scam weaponized human cognitive biases phase-by-phase (Hook $\to$ Authority $\to$ Synthetic Urgency $\to$ Exfiltration). |
+| **5 (1-Click Complaint Dossier)** | Click **📋 File 1930/SEBI Complaint** in report header | Generates an official, pre-formatted legal complaint dossier with evidentiary hash (`RKSHK-...`), intercepted mule VPAs, and direct links to SEBI SCORES or 1930 Cybercrime portal. |
+| **6 (Vernacular Audio Briefing)** | Click **Listen Safety Briefing (EN / HI / GU)** | Native browser speech synthesis reads an urgent verbal warning in Hindi, Gujarati, or English designed for non-tech-savvy vernacular investors. |
+| **7 (WhatsApp PWA Share Target)** | On mobile/PWA, tap Share on any WhatsApp message | Directly forwards text, link, or screenshot into Rakshak's `/investigate` screen with 0 copy-paste friction. |
+| **8 (Golden Hour Emergency HUD)** | Trigger any high/critical threat report | **Golden Hour Action HUD**: Floating crisis banner with 1-tap `tel:1930` dialing, NPCI `*99#` USSD bank freeze code copy, and immediate loss-containment checklist. |
+| **9 (Android Banking Trojan Inspector)** | Inspect side-loaded APK manifests / permission logs | **APK Reverse Engineering Inspector**: Unmasks remote access trojans (Hydra/TeaBot) stealing SMS OTPs and abusing Accessibility/Overlay services. |
+| **10 (PDF Regulatory Forensics)** | Upload alleged SEBI approval or IPO allotment letters | **Document Metadata Forensics**: Flags Canva/Photoshop consumer software generation and missing Class-3 DSC cryptographic signatures. |
+| **11 (Threat Intel STIX 2.1 Export)** | Click **🛡 STIX 2.1** in the report header | 1-Click export of incident indicators (IOCs: domains, phones, mule VPAs) into standardized OASIS STIX 2.1 JSON for LEAs and SOC firewalls. |
 
 ## How it works
 

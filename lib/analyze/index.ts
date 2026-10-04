@@ -16,6 +16,15 @@ import { buildWhy } from "./explain";
 import { buildActions } from "./actions";
 import { buildGraph } from "./graph";
 import { augmentWithLlm } from "@/lib/ai/llm";
+import { runLiveVerification } from "./intel";
+import { matchIntermediary } from "./registry";
+import { generateComplaintDossier } from "./dossier";
+import { analyzeIfsc } from "./ifsc";
+import { buildPsychologicalTimeline } from "./psychology";
+import { parseQrPayload } from "./qr";
+import { inspectAndDisarmUrl } from "./sandbox";
+import { inspectApkPayload } from "./apk";
+import { analyzePdfForensics } from "./pdf-forensics";
 
 export interface AnalyzeInput {
   kind: InputKind;
@@ -85,7 +94,24 @@ export async function analyze(input: AnalyzeInput): Promise<AnalysisReport> {
   const insecure = normalized.urls.some((u) => /^http:\/\//i.test(u));
   const domains = analyzeDomains(normalized.domains, hasHttp, insecure);
   const registration = checkRegistration(entities);
-  applyClaimVerification(claims, registration, domains);
+
+    let liveIntel: import("@/types/intel").LiveVerificationReport | undefined;
+  if (normalized.domains.length > 0 || normalized.urls.length > 0) {
+    try {
+      liveIntel = await runLiveVerification(normalized.domains, normalized.urls);
+    } catch {
+      // Degrade gracefully offline
+    }
+  }
+
+  const comparison = matchIntermediary({
+    text: normalized.text,
+    domains: normalized.domains,
+    registrationNumbers: entities.filter((e) => e.type === "registration_no").map((e) => e.value),
+    companies: entities.filter((e) => e.type === "company").map((e) => e.value),
+  });
+
+  applyClaimVerification(claims, registration, domains, liveIntel);
   mark("verify");
 
   const textSignals: Signal[] = detectTextSignals(normalized.text, context);
@@ -122,6 +148,7 @@ export async function analyze(input: AnalyzeInput): Promise<AnalysisReport> {
     hasSignals: signals.length > 0,
     charCount: normalized.charCount,
     context,
+    live: liveIntel,
   });
   mark("evidence");
 
@@ -133,7 +160,7 @@ export async function analyze(input: AnalyzeInput): Promise<AnalysisReport> {
     officialDomains: domains.official.length,
     fineDomains: domains.fine.length,
     unknownDomains: domains.unknown.length,
-    badDomains: domains.suspicious.length + domains.mismatched.length,
+    badDomains: domains.suspicious.length + domains.mismatched.length + (liveIntel?.hasBlocklistHit ? 1 : 0),
     totalDomains:
       domains.official.length + domains.fine.length + domains.unknown.length + domains.suspicious.length + domains.mismatched.length,
   };
@@ -145,6 +172,7 @@ export async function analyze(input: AnalyzeInput): Promise<AnalysisReport> {
     source,
     hasAmount,
     insufficientEvidence,
+    live: liveIntel,
   });
   mark("risk");
 
@@ -219,6 +247,25 @@ export async function analyze(input: AnalyzeInput): Promise<AnalysisReport> {
     usedLlm: augmentation.used,
     insufficientEvidence,
     pipeline: stages,
+    live: liveIntel,
+    comparison,
+    dossier: generateComplaintDossier({
+      id: "inc_" + Math.random().toString(36).slice(2, 8),
+      createdAt: new Date().toISOString(),
+      risk,
+      signals,
+      normalized,
+      entities,
+    }),
+    ifsc: analyzeIfsc(normalized.text),
+    psychology: buildPsychologicalTimeline({
+      text: normalized.text,
+      signals,
+    }),
+    qr: parseQrPayload(normalized.text),
+    sandbox: input.url ? inspectAndDisarmUrl(input.url, normalized.text) : undefined,
+    apk: inspectApkPayload(normalized.text),
+    pdfForensics: analyzePdfForensics(normalized.text),
   });
 }
 

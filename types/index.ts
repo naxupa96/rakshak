@@ -74,7 +74,143 @@ export type SignalId =
   | "pressure_tactics"
   | "referral_pressure"
   | "secret_exclusive"
-  | "emotional_manipulation";
+  | "emotional_manipulation"
+  | "payment_link"
+  | "pump_and_dump"
+  | "coercive_arrest"
+  | "mule_vpa"
+  | "suspicious_intermediary";
+
+export interface ImpersonationComparison {
+  claimedName: string;
+  claimedRegistration?: string;
+  matchedEntity: {
+    name: string;
+    registrationNo: string;
+    category: string;
+    officialDomain: string;
+    officialHelpline: string;
+    similarityScore: number;
+    matchType: "exact" | "typosquat" | "fictitious_number" | "unregistered";
+  };
+  disparities: {
+    field: string;
+    claimed: string;
+    official: string;
+    verdict: "match" | "mismatch" | "unverified";
+  }[];
+}
+
+export interface ComplaintDossier {
+  incidentId: string;
+  generatedAt: string;
+  evidenceHash: string;
+  portalTarget: "SEBI_SCORES" | "NATIONAL_CYBERCRIME_1930" | "RBI_CMS";
+  subject: string;
+  complaintText: string;
+  extractedSuspects: {
+    domains: string[];
+    phones: string[];
+    vpas: string[];
+    handles: string[];
+  };
+}
+
+export interface IfscMatch {
+  code: string;
+  bankName: string;
+  bankCode: string;
+  branch: string;
+  state?: string;
+  isKnownMuleZone: boolean;
+  muleZoneName?: string;
+  riskNotice?: string;
+}
+
+export interface PsychologicalStage {
+  stage: "hook" | "authority" | "urgency" | "exfiltration";
+  label: string;
+  biasWeaponized: string;
+  detectedQuote: string;
+  explanation: string;
+}
+
+export interface QrExtraction {
+  hasQr: boolean;
+  payloadType?: "upi" | "url" | "text" | "phone";
+  rawPayload?: string;
+  decodedTarget?: string;
+  riskNotice?: string;
+}
+
+export interface SandboxInspection {
+  targetUrl: string;
+  disarmedHtml?: string;
+  extractedForms: { action: string; method: string; inputs: string[] }[];
+  maliciousScriptsStripped: number;
+  suspiciousElements: { element: string; reason: string; severity: "critical" | "high" | "medium" }[];
+  isSafePreviewAvailable: boolean;
+}
+
+export interface DangerousPermissionInfo {
+  permission: string;
+  name: string;
+  category: "sms" | "accessibility" | "remote_control" | "overlay" | "storage" | "installer";
+  severity: "critical" | "high" | "medium";
+  description: string;
+  trojanPattern: string;
+}
+
+export interface ApkInspection {
+  isApk: boolean;
+  packageName?: string;
+  versionName?: string;
+  detectedPermissions: DangerousPermissionInfo[];
+  criticalPermissionsCount: number;
+  highPermissionsCount: number;
+  isBankingTrojanLikelihood: "high" | "moderate" | "low" | "none";
+  identifiedRisks: string[];
+  securityAdvisories: string[];
+}
+
+export interface PdfForensicReport {
+  isPdf: boolean;
+  producer?: string;
+  creator?: string;
+  title?: string;
+  author?: string;
+  creationDate?: string;
+  modDate?: string;
+  hasDigitalSignature: boolean;
+  signatureStandard?: string;
+  isSuspiciousGenerator: boolean;
+  claimedIssuer?: string;
+  verdict: "authentic_certified" | "suspicious_forgery" | "unverified_document";
+  tamperIndicators: string[];
+}
+
+export interface StixBundle {
+  type: "bundle";
+  id: string;
+  spec_version: "2.1";
+  objects: Array<{
+    type: string;
+    id: string;
+    spec_version?: string;
+    created?: string;
+    modified?: string;
+    name?: string;
+    description?: string;
+    pattern?: string;
+    pattern_type?: string;
+    valid_from?: string;
+    source_ref?: string;
+    target_ref?: string;
+    relationship_type?: string;
+    labels?: string[];
+    [key: string]: unknown;
+  }>;
+}
 
 export type GraphNodeKind =
   | "entity"
@@ -235,6 +371,9 @@ export interface PipelineStage {
   status: "done" | "skipped" | "failed";
 }
 
+import type { LiveVerificationReport } from "./intel";
+export * from "./intel";
+
 export interface AnalysisReport {
   id: string;
   createdAt: string;
@@ -266,6 +405,15 @@ export interface AnalysisReport {
   usedLlm: boolean;
   insufficientEvidence: boolean;
   pipeline: PipelineStage[];
+  live?: LiveVerificationReport;
+  comparison?: ImpersonationComparison;
+  dossier?: ComplaintDossier;
+  ifsc?: IfscMatch;
+  psychology?: PsychologicalStage[];
+  qr?: QrExtraction;
+  sandbox?: SandboxInspection;
+  apk?: ApkInspection;
+  pdfForensics?: PdfForensicReport;
 }
 
 export interface AnalyzeRequest {
