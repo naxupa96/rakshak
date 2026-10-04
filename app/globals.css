@@ -1,26 +1,356 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ink: #0a0b0d;
+  --color-ink-2: #0d0f12;
+  --color-panel: #111418;
+  --color-panel-2: #171b20;
+  --color-line: #23282f;
+  --color-line-2: #2d333b;
+  --color-bone: #edeff2;
+  --color-mist: #98a0ab;
+  --color-dim: #6b737e;
+  --color-signal: #ff4d3d;
+  --color-signal-2: #b32b1f;
+  --color-amber: #f2a93b;
+  --color-emerald: #35c08a;
+  --color-azure: #5b93ff;
+
+  --font-sans: var(--font-inter), "Noto Sans Devanagari", "Noto Sans Gujarati", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-deva: var(--font-noto-deva), var(--font-inter), sans-serif;
+  --font-guj: var(--font-noto-guj), var(--font-inter), sans-serif;
+
+  --radius-card: 16px;
+  --radius-pill: 999px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Simple mode scales every rem-based utility up for older readers. */
+html[data-simple="1"] {
+  font-size: 18.5px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-ink);
+  color: var(--color-bone);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(255, 77, 61, 0.28);
+  color: #fff;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-2) transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-azure);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .panel {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)) ,
+      var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+
+  .panel-flat {
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+
+  .hairline {
+    border-color: var(--color-line);
+  }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-dim);
+  }
+
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-line-2);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 3px 10px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--color-mist);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-primary {
+    background: var(--color-bone);
+    color: #0a0b0d;
+  }
+
+  .btn-primary:hover {
+    background: #ffffff;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border-color: var(--color-line-2);
+    color: var(--color-bone);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--color-dim);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .btn-danger {
+    background: rgba(255, 77, 61, 0.12);
+    border-color: rgba(255, 77, 61, 0.45);
+    color: #ffb4ac;
+  }
+
+  .btn-danger:hover {
+    background: rgba(255, 77, 61, 0.2);
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .field {
+    width: 100%;
+    background: var(--color-ink-2);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--color-bone);
+    transition: border-color 140ms ease;
+  }
+
+  .field::placeholder {
+    color: var(--color-dim);
+  }
+
+  .field:focus {
+    border-color: var(--color-line-2);
+    outline: none;
+  }
+
+  .seg {
+    display: inline-flex;
+    padding: 3px;
+    gap: 2px;
+    background: var(--color-ink-2);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+  }
+
+  .seg button {
+    border-radius: var(--radius-pill);
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--color-mist);
+    transition: background-color 140ms ease, color 140ms ease;
+  }
+
+  .seg button[aria-selected="true"] {
+    background: var(--color-panel-2);
+    color: var(--color-bone);
+    box-shadow: inset 0 0 0 1px var(--color-line-2);
+  }
+
+  .seg button:hover {
+    color: var(--color-bone);
+  }
+}
+
+@layer utilities {
+  .grain {
+    position: relative;
+  }
+
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px);
+    background-size: 3px 3px;
+  }
+
+  .grid-lines {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Anchored sections clear the sticky header when scrolled into view. */
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+.chev {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+details[open] > summary .chev {
+  transform: rotate(180deg);
+}
+
+/* Brief highlight when the score breakdown jumps to a section. */
+.gnode {
+  cursor: pointer;
+}
+.gnode:hover rect,
+.gnode:focus-visible rect {
+  stroke: #5b93ff;
+}
+.gnode:focus-visible {
+  outline: none;
+}
+.flash-target {
+  animation: flash-target 1.8s ease-out;
+}
+@keyframes flash-target {
+  0%,
+  35% {
+    box-shadow: 0 0 0 2px rgba(91, 147, 255, 0.55);
+    border-radius: 14px;
+  }
+  100% {
+    box-shadow: 0 0 0 2px rgba(91, 147, 255, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #111;
+  }
+  /* The app is designed on a dark surface; force a readable light print. */
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  span,
+  li,
+  dt,
+  dd,
+  label,
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  td,
+  th {
+    color: #111 !important;
+  }
+  .text-mist,
+  .text-dim,
+  .kicker {
+    color: #4b5563 !important;
+  }
+  .panel,
+  .panel-flat,
+  .card {
+    background: #fff !important;
+    border-color: #d5dae1 !important;
+    box-shadow: none !important;
+  }
+  .chip,
+  .btn,
+  .seg,
+  .field {
+    border-color: #c9ced6 !important;
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .divide-y > * + * {
+    border-color: #e5e8ec !important;
+  }
+  svg text {
+    fill: #111;
+  }
+  section {
+    break-inside: avoid;
+  }
+  a[href^="/"]::after {
+    content: "";
+  }
 }
